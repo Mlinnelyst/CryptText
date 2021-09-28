@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ContactsParamList } from './ContactsParamList';
 import { ContactsOverviewScreen } from './screens/ContactsOverviewScreen';
 import { DisplayScanCodeScreen } from './screens/DisplayScanCodeScreen';
 import Colors from '../../styles/Colors';
 import Styles from '../../styles/Styles';
+import { ContactsContext } from '../../providers/ContactsProvider';
 
 interface ContactsStackProps {}
 
 const Stack = createStackNavigator<ContactsParamList>();
 
 export const ContactsStack: React.FC<ContactsStackProps> = ({}) => {
+	const { contacts } = useContext(ContactsContext);
+
 	return (
 		<Stack.Navigator
-			initialRouteName='ContactsOverview'
+			initialRouteName={
+				contacts.length == 0 ? 'DisplayScanCode' : 'ContactsOverview'
+			}
 			screenOptions={{
 				cardStyle: { backgroundColor: Colors.darkBlue },
 				headerStyle: {

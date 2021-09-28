@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { NavigationContainer, RouteProp } from '@react-navigation/native';
 import { ActivityIndicator, Button, Text, View } from 'react-native';
 
-import { IntroStack } from '../nav/intro/IntroStack';
 import { UserDataContext } from './UserDataProvider';
 import Colors from '../styles/Colors';
 import Styles from '../styles/Styles';
@@ -18,7 +17,7 @@ import { ContactsStack } from '../nav/contacts/ContactsStack';
 interface RoutesProps {}
 
 export const Routes: React.FC<RoutesProps> = () => {
-	const { userData, getUserData, setUserData } = useContext(UserDataContext);
+	const { getUserData, setUserData } = useContext(UserDataContext);
 	const { getContacts } = useContext(ContactsContext);
 	const { getClient } = useContext(ClientKeyContext);
 	const [loading, setLoading] = useState(false);
@@ -45,7 +44,7 @@ export const Routes: React.FC<RoutesProps> = () => {
 
 	return (
 		<NavigationContainer>
-			{userData.firstTimeSetupComplete ? <ContactsStack /> : <IntroStack />}
+			<ContactsStack />
 		</NavigationContainer>
 	);
 };
