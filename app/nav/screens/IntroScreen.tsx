@@ -7,12 +7,6 @@ import IconSvg from '../../components/IconSvg';
 
 export function IntroScreen({ navigation }: MainNavProps<'Intro'>) {
 	const screenWidth = Dimensions.get('screen').width;
-
-	const displayCodePressed = () => {
-		console.log('Navigate to display code');
-		navigation.push('DisplayCode');
-	};
-
 	const codeSize = screenWidth * 0.8;
 
 	return (
@@ -35,7 +29,7 @@ export function IntroScreen({ navigation }: MainNavProps<'Intro'>) {
 
 				<View style={{ flex: 2 }}>
 					<IconButton
-						onPress={displayCodePressed}
+						onPress={() => navigation.push('DisplayCode')}
 						iconName='contacts'
 						text='Add first contact'
 						height={Dimensions.get('screen').height * 0.06}

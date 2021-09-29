@@ -11,13 +11,24 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 	const [hasPermission, setHasPermission] = React.useState(false);
 
 	const screenWidth = Dimensions.get('screen').width;
-
-	const displayCodePressed = () => {
-		console.log('Navigate to display code');
-		navigation.pop();
-	};
-
 	const codeSize = screenWidth * 0.8;
+
+	useState(() => {
+		const getCameraPermission = () => {
+			if (!hasPermission) {
+				(async () => {
+					const { status } = await BarCodeScanner.requestPermissionsAsync();
+					setHasPermission(status === 'granted');
+				})();
+			}
+		};
+
+		navigation.addListener('transitionEnd', getCameraPermission);
+
+		return () => {
+			navigation.removeListener('transitionEnd', getCameraPermission);
+		};
+	});
 
 	return (
 		<View style={[Styles.view, Styles.centeredView]}>
@@ -52,7 +63,7 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 
 				<View style={{ flex: 2 }}>
 					<IconButton
-						onPress={displayCodePressed}
+						onPress={() => navigation.pop()}
 						iconName='qrcode'
 						text='Display your code'
 						height={Dimensions.get('screen').height * 0.06}

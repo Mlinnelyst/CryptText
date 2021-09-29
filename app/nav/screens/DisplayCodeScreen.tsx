@@ -9,19 +9,8 @@ import Colors from '../../styles/Colors';
 
 export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 	const { client } = useContext(ClientKeyContext);
+
 	const screenWidth = Dimensions.get('screen').width;
-
-	const scanCodePressed = () => {
-		console.log('Scan code pressed.');
-		navigation.push('ScanCode');
-		/*if (!hasPermission) {
-			(async () => {
-				const { status } = await BarCodeScanner.requestPermissionsAsync();
-				setHasPermission(status === 'granted');
-			})();
-		}*/
-	};
-
 	const codeSize = screenWidth * 0.8;
 
 	return (
@@ -53,7 +42,7 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 
 				<View style={{ flex: 2 }}>
 					<IconButton
-						onPress={scanCodePressed}
+						onPress={() => navigation.push('ScanCode')}
 						iconName='camera'
 						text='Scan a code'
 						height={Dimensions.get('screen').height * 0.06}
