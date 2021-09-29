@@ -7,7 +7,10 @@ export type MainParamList = {
 	DisplayCode: undefined;
 	ScanCode: undefined;
 	Intro: undefined;
-	EstablishSecret: undefined;
+	EstablishSecret: {
+		recipientPublicKey: string;
+		clientScannedPublicKey: boolean;
+	};
 };
 
 export type MainNavProps<T extends keyof MainParamList> = {

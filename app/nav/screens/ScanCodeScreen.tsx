@@ -5,14 +5,18 @@ import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Colors from '../../styles/Colors';
+import { SocketContext } from '../../providers/SocketProvider';
 
 export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
-	const [hasPermission, setHasPermission] = React.useState(false);
+	const [hasPermission, setHasPermission] = useState(false);
+	const [barCodeScanned, setBarCodeScanned] = useState(true);
 
 	const screenWidth = Dimensions.get('screen').width;
 	const codeSize = screenWidth * 0.8;
 
 	useState(() => {
+		console.log('Scan code state called!');
+
 		const getCameraPermission = () => {
 			navigation.removeListener('transitionEnd', getCameraPermission);
 
@@ -24,7 +28,10 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 			}
 		};
 
-		navigation.addListener('transitionEnd', getCameraPermission);
+		navigation.addListener('transitionEnd', () => {
+			setBarCodeScanned(false);
+			getCameraPermission();
+		});
 	});
 
 	return (
@@ -40,7 +47,15 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 				>
 					{hasPermission ? (
 						<BarCodeScanner
-							onBarCodeScanned={() => {}}
+							onBarCodeScanned={(params) => {
+								if (!barCodeScanned) {
+									setBarCodeScanned(true);
+									navigation.push('EstablishSecret', {
+										clientScannedPublicKey: true,
+										recipientPublicKey: params.data,
+									});
+								}
+							}}
 							style={{ width: codeSize, height: codeSize }}
 						/>
 					) : (
