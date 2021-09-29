@@ -7,6 +7,7 @@ export type MainParamList = {
 	DisplayCode: undefined;
 	ScanCode: undefined;
 	Intro: undefined;
+	EstablishSecret: undefined;
 };
 
 export type MainNavProps<T extends keyof MainParamList> = {

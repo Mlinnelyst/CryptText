@@ -20,7 +20,7 @@ export function ContactsOverviewScreen({
 			headerRight: () => (
 				<TouchableOpacity
 					onPress={() => {
-						navigation.push('DisplayScanCode');
+						navigation.push('DisplayCode');
 					}}
 				>
 					<AntDesign

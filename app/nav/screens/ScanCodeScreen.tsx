@@ -3,7 +3,6 @@ import { ActivityIndicator, Dimensions, Text, View } from 'react-native';
 import IconButton from '../../components/IconButton';
 import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
-import IconSvg from '../../components/IconSvg';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Colors from '../../styles/Colors';
 
@@ -15,6 +14,8 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 
 	useState(() => {
 		const getCameraPermission = () => {
+			navigation.removeListener('transitionEnd', getCameraPermission);
+
 			if (!hasPermission) {
 				(async () => {
 					const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -24,10 +25,6 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 		};
 
 		navigation.addListener('transitionEnd', getCameraPermission);
-
-		return () => {
-			navigation.removeListener('transitionEnd', getCameraPermission);
-		};
 	});
 
 	return (

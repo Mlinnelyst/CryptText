@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { NavigationContainer, RouteProp } from '@react-navigation/native';
+import {
+	DefaultTheme,
+	NavigationContainer,
+	RouteProp,
+} from '@react-navigation/native';
 import { ActivityIndicator, Button, Text, View } from 'react-native';
 
 import { UserDataContext } from './UserDataProvider';
@@ -42,8 +46,11 @@ export const Routes: React.FC<RoutesProps> = () => {
 		);
 	}
 
+	const navTheme = DefaultTheme;
+	navTheme.colors.background = Colors.darkBlue;
+
 	return (
-		<NavigationContainer>
+		<NavigationContainer theme={navTheme}>
 			<MainStack />
 		</NavigationContainer>
 	);

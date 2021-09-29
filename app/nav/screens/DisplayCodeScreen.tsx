@@ -42,7 +42,10 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 
 				<View style={{ flex: 2 }}>
 					<IconButton
-						onPress={() => navigation.push('ScanCode')}
+						onPress={() => {
+							//navigation.navigate('ScanCode');
+							navigation.push('EstablishSecret');
+						}}
 						iconName='camera'
 						text='Scan a code'
 						height={Dimensions.get('screen').height * 0.06}

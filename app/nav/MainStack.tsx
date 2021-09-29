@@ -1,7 +1,11 @@
 import React, { useContext } from 'react';
 import {
+	CardStyleInterpolators,
 	createStackNavigator,
+	HeaderStyleInterpolators,
+	TransitionPreset,
 	TransitionPresets,
+	TransitionSpecs,
 } from '@react-navigation/stack';
 import { MainParamList } from './MainParamList';
 import { ContactsOverviewScreen } from './screens/ContactsOverviewScreen';
@@ -11,10 +15,39 @@ import { ContactsContext } from '../providers/ContactsProvider';
 import { IntroScreen } from './screens/IntroScreen';
 import { DisplayCodeScreen } from './screens/DisplayCodeScreen';
 import { ScanCodeScreen } from './screens/ScanCodeScreen';
+import { EstablishSecretModal } from './modals/EstablishSecretModal';
 
 interface ContactsStackProps {}
 
 const Stack = createStackNavigator<MainParamList>();
+
+const customTransition: TransitionPreset = {
+	gestureDirection: 'horizontal',
+	transitionSpec: {
+		open: TransitionSpecs.TransitionIOSSpec,
+		close: TransitionSpecs.TransitionIOSSpec,
+	},
+	headerStyleInterpolator: HeaderStyleInterpolators.forFade,
+	cardStyleInterpolator: ({ current, next, layouts }) => {
+		return {
+			cardStyle: {
+				transform: [
+					{
+						translateX: next
+							? next.progress.interpolate({
+									inputRange: [0, 1],
+									outputRange: [0, -layouts.screen.width],
+							  })
+							: current.progress.interpolate({
+									inputRange: [0, 1],
+									outputRange: [layouts.screen.width, 0],
+							  }),
+					},
+				],
+			},
+		};
+	},
+};
 
 export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 	const { contacts } = useContext(ContactsContext);
@@ -35,30 +68,41 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 				},
 				headerTitleAlign: 'center',
 				headerTintColor: Styles.title.color,
-				...TransitionPresets.SlideFromRightIOS,
-				gestureDirection: 'horizontal',
-				gestureEnabled: true,
 			}}
 		>
+			<Stack.Group
+				screenOptions={{
+					...customTransition,
+					gestureDirection: 'horizontal',
+					gestureEnabled: true,
+				}}
+			>
+				<Stack.Screen
+					name='ContactsOverview'
+					component={ContactsOverviewScreen}
+					options={{ headerTitle: 'Contacts' }}
+				/>
+				<Stack.Group
+					screenOptions={{
+						headerShown: contacts.length != 0,
+						gestureEnabled: false,
+					}}
+				>
+					<Stack.Screen name='DisplayCode' component={DisplayCodeScreen} />
+					<Stack.Screen name='ScanCode' component={ScanCodeScreen} />
+				</Stack.Group>
+
+				<Stack.Screen
+					name='Intro'
+					component={IntroScreen}
+					options={{ headerShown: false }}
+				/>
+			</Stack.Group>
+
 			<Stack.Screen
-				name='ContactsOverview'
-				component={ContactsOverviewScreen}
-				options={{ headerTitle: 'Contacts' }}
-			/>
-			<Stack.Screen
-				name='Intro'
-				component={IntroScreen}
-				options={{ headerShown: false }}
-			/>
-			<Stack.Screen
-				name='DisplayCode'
-				component={DisplayCodeScreen}
-				options={{ headerShown: false }}
-			/>
-			<Stack.Screen
-				name='ScanCode'
-				component={ScanCodeScreen}
-				options={{ headerShown: false }}
+				name='EstablishSecret'
+				component={EstablishSecretModal}
+				options={{ headerShown: false, presentation: 'transparentModal' }}
 			/>
 		</Stack.Navigator>
 	);
