@@ -42,7 +42,7 @@ export const ContactsStack: React.FC<ContactsStackProps> = ({}) => {
 			<Stack.Screen
 				name='DisplayScanCode'
 				component={DisplayScanCodeScreen}
-				options={{ headerTitle: 'Add contact' }}
+				options={{ headerShown: false }}
 			/>
 		</Stack.Navigator>
 	);

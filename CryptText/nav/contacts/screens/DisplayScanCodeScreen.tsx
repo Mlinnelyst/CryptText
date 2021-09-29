@@ -73,9 +73,9 @@ export function DisplayScanCodeScreen({
 				]}
 			>
 				<View style={{ width: '80%', flex: 1 }}>
-					<View style={{ flex: 6 }}>
-						<IconSvg />
-					</View>
+					<View style={{ flex: 1 }}></View>
+					<IconSvg style={{ width: codeSize, height: codeSize }} />
+					<View style={{ flex: 1 }}></View>
 					<View style={{ flex: 5 }}>
 						<Text style={Styles.title}>Get started using CryptText</Text>
 						<Text style={Styles.text}>
