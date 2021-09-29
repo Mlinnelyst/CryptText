@@ -37,7 +37,7 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 	};
 
 	const getContacts = async () => {
-		/* 	setContactsState([
+		/* setContactsState([
 			{
 				name: 'Some name1',
 				publicKey: '12341',

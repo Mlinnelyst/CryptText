@@ -102,11 +102,6 @@ export function EstablishSecretModal({
 
 			sharedSecretCalculation();
 		}
-
-		return () => {
-			socket.off('public_key_scan_confirmed');
-			console.log('Cleaned socket hook');
-		};
 	});
 
 	const screenWidth = Dimensions.get('screen').width;

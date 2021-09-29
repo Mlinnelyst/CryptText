@@ -16,8 +16,6 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 	const codeSize = screenWidth * 0.8;
 
 	useEffect(() => {
-		console.log('Scan code state called!');
-
 		// Get camera permission
 		if (!hasPermission) {
 			(async () => {

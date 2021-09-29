@@ -7,6 +7,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../../styles/Colors';
 import { UserDataContext } from '../../providers/UserDataProvider';
+import { ContactComponent } from '../../components/ContactComponent';
+import { Divider } from 'react-native-elements/dist/divider/Divider';
 
 export function ContactsOverviewScreen({
 	navigation,
@@ -37,18 +39,20 @@ export function ContactsOverviewScreen({
 				</TouchableOpacity>
 			),
 		});
+		console.log('Contacts: ' + contacts.length);
 	});
 
 	return (
-		<View style={[Styles.view, { alignItems: 'center' }]}>
+		<View style={[Styles.view, {}]}>
 			<View
 				style={[
-					Styles.centeredView,
+					Styles.view,
 					{
 						backgroundColor: Colors.white,
-						width: '95%',
+						width: '90%',
 						borderTopLeftRadius: 20,
 						borderTopRightRadius: 20,
+						alignSelf: 'center',
 					},
 				]}
 			>
@@ -58,10 +62,9 @@ export function ContactsOverviewScreen({
 						const c = item as Contact;
 						return c.conversationId;
 					}}
-					renderItem={() => (
-						<View>
-							<Text>test</Text>
-						</View>
+					style={{ flex: 1, marginTop: 12 }}
+					renderItem={(info) => (
+						<ContactComponent contact={info.item} navigation={navigation} />
 					)}
 				/>
 			</View>
