@@ -7,8 +7,10 @@ import QRCode from 'react-native-qrcode-svg';
 import { ClientKeyContext } from '../../providers/ClientKeyProvider';
 import Colors from '../../styles/Colors';
 import { SocketContext } from '../../providers/SocketProvider';
+import { ContactsContext } from '../../providers/ContactsProvider';
 
 export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
+	const { contacts } = useContext(ContactsContext);
 	const { socket } = useContext(SocketContext);
 	const { client } = useContext(ClientKeyContext);
 
@@ -16,6 +18,8 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 	const codeSize = screenWidth * 0.8;
 
 	useEffect(() => {
+		navigation.setOptions({ headerShown: contacts.length != 0 });
+
 		// Add socket listener
 		socket.on('public_key_scanned', (scanned_by_public_key: string) => {
 			console.log('Public key scanned!');

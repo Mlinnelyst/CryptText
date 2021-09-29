@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
 import {
-	CardStyleInterpolators,
 	createStackNavigator,
 	HeaderStyleInterpolators,
 	TransitionPreset,
-	TransitionPresets,
 	TransitionSpecs,
 } from '@react-navigation/stack';
 import { MainParamList } from './MainParamList';
@@ -89,12 +87,7 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 					options={{ headerTitle: 'Chat' }}
 				/>
 
-				<Stack.Group
-					screenOptions={{
-						headerShown: contacts.length != 0,
-						gestureEnabled: false,
-					}}
-				>
+				<Stack.Group>
 					<Stack.Screen name='DisplayCode' component={DisplayCodeScreen} />
 					<Stack.Screen name='ScanCode' component={ScanCodeScreen} />
 				</Stack.Group>

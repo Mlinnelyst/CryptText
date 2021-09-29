@@ -5,20 +5,21 @@ import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Colors from '../../styles/Colors';
+import { ContactsContext } from '../../providers/ContactsProvider';
 
 export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
+	const { contacts } = useContext(ContactsContext);
 	const [hasPermission, setHasPermission] = useState(false);
-	//const [barCodeScanned, setBarCodeScanned] = useRef(useState(false)).current;
 
-	var barCodeScanned = useRef(false).current;
+	var barCodeScannedTs = 0;
 
 	const screenWidth = Dimensions.get('screen').width;
 	const codeSize = screenWidth * 0.8;
 
 	useEffect(() => {
-		const getCameraPermission = () => {
-			barCodeScanned = false;
+		navigation.setOptions({ headerShown: contacts.length != 0 });
 
+		const getCameraPermission = () => {
 			// Get camera permission
 			if (!hasPermission) {
 				(async () => {
@@ -33,7 +34,7 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 		return () => {
 			navigation.removeListener('transitionEnd', getCameraPermission);
 		};
-	}, [barCodeScanned, hasPermission]);
+	}, [barCodeScannedTs, hasPermission]);
 
 	return (
 		<View style={[Styles.view, Styles.centeredView]}>
@@ -46,12 +47,13 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 						height: codeSize,
 					}}
 				>
-					{hasPermission && !barCodeScanned ? (
+					{hasPermission && !barCodeScannedTs ? (
 						<BarCodeScanner
 							onBarCodeScanned={(params) => {
-								if (!barCodeScanned) {
-									barCodeScanned = true;
-									console.log('BAR CODE SCANNED ' + barCodeScanned);
+								if (new Date().getTime() - barCodeScannedTs > 2.5 * 1000) {
+									barCodeScannedTs = new Date().getTime();
+
+									console.log('BAR CODE SCANNED ' + barCodeScannedTs);
 									navigation.push('EstablishSecret', {
 										clientScannedPublicKey: true,
 										recipientPublicKey: params.data,
