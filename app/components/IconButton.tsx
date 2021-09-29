@@ -33,6 +33,7 @@ export default (props: Props) => {
 					backgroundColor: Colors.lighterDarkBlue,
 					borderTopLeftRadius: borderRadius,
 					borderBottomLeftRadius: borderRadius,
+					justifyContent: 'center',
 				}}
 			>
 				<AntDesign
@@ -40,7 +41,6 @@ export default (props: Props) => {
 					name={props.iconName}
 					size={height * 0.6}
 					style={{
-						flex: 1,
 						color: Styles.title.color,
 						alignSelf: 'center',
 						textAlignVertical: 'center',

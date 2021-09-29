@@ -1,11 +1,16 @@
 import React, { useContext } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+	createStackNavigator,
+	TransitionPresets,
+} from '@react-navigation/stack';
 import { MainParamList } from './MainParamList';
 import { ContactsOverviewScreen } from './screens/ContactsOverviewScreen';
-import { DisplayScanCodeScreen } from './screens/DisplayScanCodeScreen';
 import Colors from '../styles/Colors';
 import Styles from '../styles/Styles';
 import { ContactsContext } from '../providers/ContactsProvider';
+import { IntroScreen } from './screens/IntroScreen';
+import { DisplayCodeScreen } from './screens/DisplayCodeScreen';
+import { ScanCodeScreen } from './screens/ScanCodeScreen';
 
 interface ContactsStackProps {}
 
@@ -16,9 +21,7 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 
 	return (
 		<Stack.Navigator
-			initialRouteName={
-				contacts.length == 0 ? 'DisplayScanCode' : 'ContactsOverview'
-			}
+			initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
 			screenOptions={{
 				cardStyle: { backgroundColor: Colors.darkBlue },
 				headerStyle: {
@@ -32,6 +35,9 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 				},
 				headerTitleAlign: 'center',
 				headerTintColor: Styles.title.color,
+				...TransitionPresets.SlideFromRightIOS,
+				gestureDirection: 'horizontal',
+				gestureEnabled: true,
 			}}
 		>
 			<Stack.Screen
@@ -40,8 +46,18 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 				options={{ headerTitle: 'Contacts' }}
 			/>
 			<Stack.Screen
-				name='DisplayScanCode'
-				component={DisplayScanCodeScreen}
+				name='Intro'
+				component={IntroScreen}
+				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name='DisplayCode'
+				component={DisplayCodeScreen}
+				options={{ headerShown: false }}
+			/>
+			<Stack.Screen
+				name='ScanCode'
+				component={ScanCodeScreen}
 				options={{ headerShown: false }}
 			/>
 		</Stack.Navigator>

@@ -4,7 +4,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export type MainParamList = {
 	ContactsOverview: undefined;
 	Chat: undefined;
-	DisplayScanCode: undefined;
+	DisplayCode: undefined;
+	ScanCode: undefined;
+	Intro: undefined;
 };
 
 export type MainNavProps<T extends keyof MainParamList> = {
