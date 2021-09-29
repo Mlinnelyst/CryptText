@@ -16,6 +16,7 @@ import { IntroScreen } from './screens/IntroScreen';
 import { DisplayCodeScreen } from './screens/DisplayCodeScreen';
 import { ScanCodeScreen } from './screens/ScanCodeScreen';
 import { EstablishSecretModal } from './modals/EstablishSecretModal';
+import { ChatScreen } from './screens/ChatScreen';
 
 interface ContactsStackProps {}
 
@@ -82,6 +83,12 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 					component={ContactsOverviewScreen}
 					options={{ headerTitle: 'Contacts' }}
 				/>
+				<Stack.Screen
+					name='Chat'
+					component={ChatScreen}
+					options={{ headerTitle: 'Chat' }}
+				/>
+
 				<Stack.Group
 					screenOptions={{
 						headerShown: contacts.length != 0,

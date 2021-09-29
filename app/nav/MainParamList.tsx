@@ -1,9 +1,10 @@
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Contact } from '../providers/ContactsProvider';
 
 export type MainParamList = {
 	ContactsOverview: undefined;
-	Chat: undefined;
+	Chat: { contact: Contact };
 	DisplayCode: undefined;
 	ScanCode: undefined;
 	Intro: undefined;

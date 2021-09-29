@@ -1,38 +1,31 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Text, View } from 'react-native';
 import IconButton from '../../components/IconButton';
 import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Colors from '../../styles/Colors';
-import { SocketContext } from '../../providers/SocketProvider';
 
 export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 	const [hasPermission, setHasPermission] = useState(false);
-	const [barCodeScanned, setBarCodeScanned] = useState(true);
+	//const [barCodeScanned, setBarCodeScanned] = useRef(useState(false)).current;
+
+	var barCodeScanned = useRef(false).current;
 
 	const screenWidth = Dimensions.get('screen').width;
 	const codeSize = screenWidth * 0.8;
 
-	useState(() => {
+	useEffect(() => {
 		console.log('Scan code state called!');
 
-		const getCameraPermission = () => {
-			navigation.removeListener('transitionEnd', getCameraPermission);
-
-			if (!hasPermission) {
-				(async () => {
-					const { status } = await BarCodeScanner.requestPermissionsAsync();
-					setHasPermission(status === 'granted');
-				})();
-			}
-		};
-
-		navigation.addListener('transitionEnd', () => {
-			setBarCodeScanned(false);
-			getCameraPermission();
-		});
-	});
+		// Get camera permission
+		if (!hasPermission) {
+			(async () => {
+				const { status } = await BarCodeScanner.requestPermissionsAsync();
+				setHasPermission(status === 'granted');
+			})();
+		}
+	}, [barCodeScanned, hasPermission]);
 
 	return (
 		<View style={[Styles.view, Styles.centeredView]}>
@@ -45,11 +38,12 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 						height: codeSize,
 					}}
 				>
-					{hasPermission ? (
+					{hasPermission && !barCodeScanned ? (
 						<BarCodeScanner
 							onBarCodeScanned={(params) => {
 								if (!barCodeScanned) {
-									setBarCodeScanned(true);
+									barCodeScanned = true;
+									console.log('BAR CODE SCANNED ' + barCodeScanned);
 									navigation.push('EstablishSecret', {
 										clientScannedPublicKey: true,
 										recipientPublicKey: params.data,

@@ -1,5 +1,5 @@
 import AntDesign from '@expo/vector-icons/build/AntDesign';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	ActivityIndicator,
 	Dimensions,
@@ -10,7 +10,6 @@ import {
 import { ClientKeyContext } from '../../providers/ClientKeyProvider';
 import { ContactsContext } from '../../providers/ContactsProvider';
 import { SocketContext } from '../../providers/SocketProvider';
-import Colors from '../../styles/Colors';
 import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 
@@ -39,9 +38,9 @@ export function EstablishSecretModal({
 
 	useState(() => {
 		const sharedSecretCalculation = () => {
-			setTimeout(async () => {
-				addEvent({ text: 'Calculating shared secret', pending: true });
+			addEvent({ text: 'Calculating shared secret', pending: true });
 
+			setTimeout(async () => {
 				const sharedSecret = await calculateSharedSecret(
 					route.params.recipientPublicKey
 				);
@@ -52,9 +51,24 @@ export function EstablishSecretModal({
 
 				addEvent({ text: 'Navigating to conversation', pending: true });
 
+				// Remove socket hook
+				socket.off('public_key_scan_confirmed');
+
 				setTimeout(() => {
-					console.log('Just do it');
-				}, 1000);
+					navigation.reset({
+						index: 0,
+						routes: [
+							{
+								name: 'ContactsOverview',
+								params: {},
+							},
+							{
+								name: 'Chat',
+								params: { navigateToContactChat: contact },
+							},
+						],
+					});
+				}, 3000);
 			}, 0);
 		};
 
@@ -88,6 +102,11 @@ export function EstablishSecretModal({
 
 			sharedSecretCalculation();
 		}
+
+		return () => {
+			socket.off('public_key_scan_confirmed');
+			console.log('Cleaned socket hook');
+		};
 	});
 
 	const screenWidth = Dimensions.get('screen').width;

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import IconButton from '../../components/IconButton';
 import Styles from '../../styles/Styles';
@@ -15,7 +15,7 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 	const screenWidth = Dimensions.get('screen').width;
 	const codeSize = screenWidth * 0.8;
 
-	useState(() => {
+	useEffect(() => {
 		// Add socket listener
 		socket.on('public_key_scanned', (scanned_by_public_key: string) => {
 			console.log('Public key scanned!');
@@ -29,7 +29,7 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 			console.log('Removed socket on scan hook.');
 			socket.off('public_key_scanned');
 		};
-	});
+	}, []);
 
 	return (
 		<View style={[Styles.view, Styles.centeredView]}>
