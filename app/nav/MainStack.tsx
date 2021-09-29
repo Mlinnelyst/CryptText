@@ -1,17 +1,17 @@
 import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ContactsParamList } from './ContactsParamList';
+import { MainParamList } from './MainParamList';
 import { ContactsOverviewScreen } from './screens/ContactsOverviewScreen';
 import { DisplayScanCodeScreen } from './screens/DisplayScanCodeScreen';
-import Colors from '../../styles/Colors';
-import Styles from '../../styles/Styles';
-import { ContactsContext } from '../../providers/ContactsProvider';
+import Colors from '../styles/Colors';
+import Styles from '../styles/Styles';
+import { ContactsContext } from '../providers/ContactsProvider';
 
 interface ContactsStackProps {}
 
-const Stack = createStackNavigator<ContactsParamList>();
+const Stack = createStackNavigator<MainParamList>();
 
-export const ContactsStack: React.FC<ContactsStackProps> = ({}) => {
+export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 	const { contacts } = useContext(ContactsContext);
 
 	return (

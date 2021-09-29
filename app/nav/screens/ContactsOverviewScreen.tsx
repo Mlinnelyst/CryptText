@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from 'react';
 import { Button, View } from 'react-native';
-import { ContactsContext } from '../../../providers/ContactsProvider';
-import Styles from '../../../styles/Styles';
-import { ContactsNavProps } from '../ContactsParamList';
+import { ContactsContext } from '../../providers/ContactsProvider';
+import Styles from '../../styles/Styles';
+import { MainNavProps } from '../MainParamList';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Colors from '../../../styles/Colors';
-import { UserDataContext } from '../../../providers/UserDataProvider';
+import Colors from '../../styles/Colors';
+import { UserDataContext } from '../../providers/UserDataProvider';
 
 export function ContactsOverviewScreen({
 	navigation,
-}: ContactsNavProps<'ContactsOverview'>) {
+}: MainNavProps<'ContactsOverview'>) {
 	const { userData, setUserData } = useContext(UserDataContext);
 	const { contacts } = useContext(ContactsContext);
 

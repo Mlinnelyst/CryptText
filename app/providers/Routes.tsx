@@ -12,7 +12,7 @@ import {
 } from '@expo-google-fonts/poppins';
 import { ContactsContext } from './ContactsProvider';
 import { ClientKeyContext } from './ClientKeyProvider';
-import { ContactsStack } from '../nav/contacts/ContactsStack';
+import { MainStack } from '../nav/MainStack';
 
 interface RoutesProps {}
 
@@ -44,7 +44,7 @@ export const Routes: React.FC<RoutesProps> = () => {
 
 	return (
 		<NavigationContainer>
-			<ContactsStack />
+			<MainStack />
 		</NavigationContainer>
 	);
 };

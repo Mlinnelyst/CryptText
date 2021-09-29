@@ -1,13 +1,13 @@
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-export type ContactsParamList = {
+export type MainParamList = {
 	ContactsOverview: undefined;
 	Chat: undefined;
 	DisplayScanCode: undefined;
 };
 
-export type ContactsNavProps<T extends keyof ContactsParamList> = {
-	navigation: StackNavigationProp<ContactsParamList, T>;
-	route: RouteProp<ContactsParamList, T>;
+export type MainNavProps<T extends keyof MainParamList> = {
+	navigation: StackNavigationProp<MainParamList, T>;
+	route: RouteProp<MainParamList, T>;
 };

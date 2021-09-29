@@ -6,20 +6,20 @@ import {
 	Text,
 	View,
 } from 'react-native';
-import IconButton from '../../../components/IconButton';
-import { ClientKeyContext } from '../../../providers/ClientKeyProvider';
-import Styles from '../../../styles/Styles';
-import { ContactsNavProps } from '../ContactsParamList';
+import IconButton from '../../components/IconButton';
+import { ClientKeyContext } from '../../providers/ClientKeyProvider';
+import Styles from '../../styles/Styles';
+import { MainNavProps } from '../MainParamList';
 import QRCode from 'react-native-qrcode-svg';
-import Colors from '../../../styles/Colors';
+import Colors from '../../styles/Colors';
 import { BarCodeEvent, BarCodeScanner } from 'expo-barcode-scanner';
-import IconSvg from '../../../components/IconSvg';
-import { UserDataContext } from '../../../providers/UserDataProvider';
-import { ContactsContext } from '../../../providers/ContactsProvider';
+import IconSvg from '../../components/IconSvg';
+import { UserDataContext } from '../../providers/UserDataProvider';
+import { ContactsContext } from '../../providers/ContactsProvider';
 
 export function DisplayScanCodeScreen({
 	navigation,
-}: ContactsNavProps<'DisplayScanCode'>) {
+}: MainNavProps<'DisplayScanCode'>) {
 	const { client } = useContext(ClientKeyContext);
 	const { contacts } = useContext(ContactsContext);
 	const [hasPermission, setHasPermission] = React.useState(false);
