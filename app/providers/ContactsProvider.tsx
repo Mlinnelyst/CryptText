@@ -37,6 +37,7 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 	};
 
 	const getContacts = async () => {
+		//await AsyncStorage.clear();
 		/* setContactsState([
 			{
 				name: 'Some name1',

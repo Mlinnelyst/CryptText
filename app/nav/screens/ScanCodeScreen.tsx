@@ -16,13 +16,23 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 	const codeSize = screenWidth * 0.8;
 
 	useEffect(() => {
-		// Get camera permission
-		if (!hasPermission) {
-			(async () => {
-				const { status } = await BarCodeScanner.requestPermissionsAsync();
-				setHasPermission(status === 'granted');
-			})();
-		}
+		const getCameraPermission = () => {
+			barCodeScanned = false;
+
+			// Get camera permission
+			if (!hasPermission) {
+				(async () => {
+					const { status } = await BarCodeScanner.requestPermissionsAsync();
+					setHasPermission(status === 'granted');
+				})();
+			}
+		};
+
+		navigation.addListener('transitionEnd', getCameraPermission);
+
+		return () => {
+			navigation.removeListener('transitionEnd', getCameraPermission);
+		};
 	}, [barCodeScanned, hasPermission]);
 
 	return (
