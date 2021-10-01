@@ -1,21 +1,20 @@
 import React, { useContext } from 'react';
 import {
-	CardStyleInterpolators,
 	createStackNavigator,
 	HeaderStyleInterpolators,
 	TransitionPreset,
-	TransitionPresets,
 	TransitionSpecs,
 } from '@react-navigation/stack';
 import { MainParamList } from './MainParamList';
 import { ContactsOverviewScreen } from './screens/ContactsOverviewScreen';
 import Colors from '../styles/Colors';
-import Styles from '../styles/Styles';
+import Styles, { transitionDuration } from '../styles/Styles';
 import { ContactsContext } from '../providers/ContactsProvider';
 import { IntroScreen } from './screens/IntroScreen';
 import { DisplayCodeScreen } from './screens/DisplayCodeScreen';
 import { ScanCodeScreen } from './screens/ScanCodeScreen';
 import { EstablishSecretModal } from './modals/EstablishSecretModal';
+import { ChatScreen } from './screens/ChatScreen';
 
 interface ContactsStackProps {}
 
@@ -24,26 +23,28 @@ const Stack = createStackNavigator<MainParamList>();
 const customTransition: TransitionPreset = {
 	gestureDirection: 'horizontal',
 	transitionSpec: {
-		open: TransitionSpecs.TransitionIOSSpec,
-		close: TransitionSpecs.TransitionIOSSpec,
+		open: {
+			animation: 'timing',
+			config: { duration: transitionDuration },
+		},
+		close: {
+			animation: 'timing',
+			config: { duration: transitionDuration },
+		},
 	},
 	headerStyleInterpolator: HeaderStyleInterpolators.forFade,
 	cardStyleInterpolator: ({ current, next, layouts }) => {
 		return {
 			cardStyle: {
-				transform: [
-					{
-						translateX: next
-							? next.progress.interpolate({
-									inputRange: [0, 1],
-									outputRange: [0, -layouts.screen.width],
-							  })
-							: current.progress.interpolate({
-									inputRange: [0, 1],
-									outputRange: [layouts.screen.width, 0],
-							  }),
-					},
-				],
+				opacity: next
+					? next.progress.interpolate({
+							inputRange: [0, 1 / 3, (1 / 3) * 2, 1],
+							outputRange: [1, 0.5, 0, 0],
+					  })
+					: current.progress.interpolate({
+							inputRange: [0, 1 / 3, (1 / 3) * 2, 1],
+							outputRange: [0, 0, 0.5, 1],
+					  }),
 			},
 		};
 	},
@@ -82,12 +83,13 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 					component={ContactsOverviewScreen}
 					options={{ headerTitle: 'Contacts' }}
 				/>
-				<Stack.Group
-					screenOptions={{
-						headerShown: contacts.length != 0,
-						gestureEnabled: false,
-					}}
-				>
+				<Stack.Screen
+					name='Chat'
+					component={ChatScreen}
+					options={{ headerTitle: 'Chat' }}
+				/>
+
+				<Stack.Group>
 					<Stack.Screen name='DisplayCode' component={DisplayCodeScreen} />
 					<Stack.Screen name='ScanCode' component={ScanCodeScreen} />
 				</Stack.Group>

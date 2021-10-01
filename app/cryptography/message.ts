@@ -17,7 +17,7 @@ export interface MessageData {
 	timestamp: number;
 }
 
-export async function create_message(
+export async function createMessage(
 	client: Client,
 	contact: Contact,
 	text: string
@@ -44,7 +44,7 @@ export async function create_message(
 	};
 }
 
-export async function verify_message(
+export async function verifyMessage(
 	client: Client,
 	contact: Contact,
 	message: Message

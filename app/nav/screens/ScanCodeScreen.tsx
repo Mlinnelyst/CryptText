@@ -1,21 +1,26 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Dimensions, Text, View } from 'react-native';
 import IconButton from '../../components/IconButton';
 import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Colors from '../../styles/Colors';
+import { ContactsContext } from '../../providers/ContactsProvider';
 
 export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
-	const [hasPermission, setHasPermission] = React.useState(false);
+	const { contacts } = useContext(ContactsContext);
+	const [hasPermission, setHasPermission] = useState(false);
+
+	var barCodeScannedTs = 0;
 
 	const screenWidth = Dimensions.get('screen').width;
 	const codeSize = screenWidth * 0.8;
 
-	useState(() => {
-		const getCameraPermission = () => {
-			navigation.removeListener('transitionEnd', getCameraPermission);
+	useEffect(() => {
+		navigation.setOptions({ headerShown: contacts.length != 0 });
 
+		const getCameraPermission = () => {
+			// Get camera permission
 			if (!hasPermission) {
 				(async () => {
 					const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -25,7 +30,11 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 		};
 
 		navigation.addListener('transitionEnd', getCameraPermission);
-	});
+
+		return () => {
+			navigation.removeListener('transitionEnd', getCameraPermission);
+		};
+	}, [barCodeScannedTs, hasPermission]);
 
 	return (
 		<View style={[Styles.view, Styles.centeredView]}>
@@ -38,9 +47,19 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 						height: codeSize,
 					}}
 				>
-					{hasPermission ? (
+					{hasPermission && !barCodeScannedTs ? (
 						<BarCodeScanner
-							onBarCodeScanned={() => {}}
+							onBarCodeScanned={(params) => {
+								if (new Date().getTime() - barCodeScannedTs > 2.5 * 1000) {
+									barCodeScannedTs = new Date().getTime();
+
+									console.log('BAR CODE SCANNED ' + barCodeScannedTs);
+									navigation.push('EstablishSecret', {
+										clientScannedPublicKey: true,
+										recipientPublicKey: params.data,
+									});
+								}
+							}}
 							style={{ width: codeSize, height: codeSize }}
 						/>
 					) : (

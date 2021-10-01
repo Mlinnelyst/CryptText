@@ -1,21 +1,28 @@
-import React, { useContext, useEffect } from 'react';
-import { Button, View } from 'react-native';
-import { ContactsContext } from '../../providers/ContactsProvider';
-import Styles from '../../styles/Styles';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Button, View, Text, Animated } from 'react-native';
+import { Contact, ContactsContext } from '../../providers/ContactsProvider';
+import Styles, { transitionDuration } from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import { AntDesign } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../../styles/Colors';
 import { UserDataContext } from '../../providers/UserDataProvider';
+import { ContactComponent } from '../../components/ContactComponent';
+import {
+	hookTransitionEvents,
+	unHookTransitionEvents,
+} from '../../utility/transitionEventHooks';
 
 export function ContactsOverviewScreen({
 	navigation,
+	route,
 }: MainNavProps<'ContactsOverview'>) {
-	const { userData, setUserData } = useContext(UserDataContext);
 	const { contacts } = useContext(ContactsContext);
 
+	const transitionEvents = hookTransitionEvents(navigation);
+
 	useEffect(() => {
-		// Set headerrigt
+		// Set headerright
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity
@@ -37,16 +44,52 @@ export function ContactsOverviewScreen({
 				</TouchableOpacity>
 			),
 		});
-	}, []);
+
+		return () => {
+			unHookTransitionEvents(navigation, transitionEvents);
+		};
+	});
+
+	const navigateToChat = (contact: Contact) => {
+		navigation.navigate('Chat', { contact });
+	};
 
 	return (
-		<View style={[Styles.view, { alignItems: 'center' }]}>
-			<Button
-				title='Dev remove has completed intro'
-				onPress={() => {
-					setUserData({ ...userData, firstTimeSetupComplete: false });
-				}}
-			></Button>
+		<View style={Styles.view}>
+			<Animated.View
+				style={[
+					Styles.view,
+					{
+						backgroundColor: Colors.white,
+						width: '90%',
+						borderTopLeftRadius: 20,
+						borderTopRightRadius: 20,
+						alignSelf: 'center',
+
+						translateY: transitionEvents.progress.interpolate({
+							inputRange: [0, 1],
+							outputRange: [100, 0],
+						}),
+					},
+				]}
+			>
+				<FlatList
+					data={contacts}
+					keyExtractor={(item) => {
+						const c = item as Contact;
+						return c.conversationId;
+					}}
+					style={{ flex: 1, marginTop: 12 }}
+					renderItem={(info) => (
+						<ContactComponent
+							contact={info.item}
+							onPress={() => {
+								navigateToChat(info.item);
+							}}
+						/>
+					)}
+				/>
+			</Animated.View>
 		</View>
 	);
 }

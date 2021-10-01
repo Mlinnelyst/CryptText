@@ -7,6 +7,8 @@ export default StyleSheet.create({
 		backgroundColor: Colors.darkBlue,
 	},
 	centeredView: {
+		flex: 1,
+		backgroundColor: Colors.darkBlue,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
@@ -26,3 +28,5 @@ export default StyleSheet.create({
 		textAlignVertical: 'center',
 	},
 });
+
+export const transitionDuration = 250;
