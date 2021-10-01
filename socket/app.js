@@ -33,7 +33,7 @@ app.post('/chat/:conversation_id/message/:recipient_pk', (req, res) => {
 
 	console.log(message);
 
-	if (!message.data || !message.data_hash || !message.encrypted_data_hash) {
+	if (!message.data || !message.dataHash || !message.encryptedDataHash) {
 		console.log('Invalid message body.');
 		res.send('Message body invalid.');
 		return;
@@ -61,6 +61,7 @@ io.on('connection', (socket) => {
 	// A client has scanned another clients public key and is now asking for a response
 	socket.on('scanned_public_key', (scanned_public_key, clients_public_key) => {
 		console.log('Public key scanned, awaiting confirmation.');
+		console.log(scanned_public_key);
 		socket
 			.to(scanned_public_key)
 			.emit('public_key_scanned', clients_public_key);
