@@ -1,6 +1,7 @@
 import React from 'react';
 import { ClientKeyProvider } from './ClientKeyProvider';
 import { ContactsProvider } from './ContactsProvider';
+import { MessagesProvider } from './MessagesProvider';
 import { Routes } from './Routes';
 import { SocketProvider } from './SocketProvider';
 import { UserDataContext, UserDataProvider } from './UserDataProvider';
@@ -13,7 +14,9 @@ export const Providers: React.FC<ProvidersProps> = ({}) => {
 			<SocketProvider>
 				<UserDataProvider>
 					<ContactsProvider>
-						<Routes />
+						<MessagesProvider>
+							<Routes />
+						</MessagesProvider>
 					</ContactsProvider>
 				</UserDataProvider>
 			</SocketProvider>

@@ -44,7 +44,6 @@ export function ContactsOverviewScreen({
 				</TouchableOpacity>
 			),
 		});
-		console.log('Contacts: ' + contacts.length);
 
 		return () => {
 			unHookTransitionEvents(navigation, transitionEvents);

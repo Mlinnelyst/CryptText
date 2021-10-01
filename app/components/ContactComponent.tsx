@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Contact } from '../providers/ContactsProvider';
+import { MessagesContext } from '../providers/MessagesProvider';
 import Colors from '../styles/Colors';
 import Styles from '../styles/Styles';
 import { ContactNameCircleComponent } from './ContactNameCircle';
@@ -13,7 +14,18 @@ export function ContactComponent({
 	contact: Contact;
 	onPress: () => void;
 }) {
-	useEffect(() => {});
+	const { getContactMessages } = useContext(MessagesContext);
+	const [latestMessage, setLatestMessage] = useState<string>();
+
+	useEffect(() => {
+		const messages = getContactMessages(contact);
+
+		if (messages.length > 0) {
+			setLatestMessage(messages[messages.length - 1].text);
+		} else {
+			setLatestMessage('No messages yet...');
+		}
+	});
 
 	return (
 		<TouchableOpacity
@@ -48,9 +60,7 @@ export function ContactComponent({
 				>
 					{contact.name}
 				</Text>
-				<Text style={[Styles.text, { fontSize: 13 }]}>
-					{contact.latestMessageText ?? 'no messages yet...'}
-				</Text>
+				<Text style={[Styles.text, { fontSize: 13 }]}>{latestMessage}</Text>
 			</View>
 			<View style={{ flex: 1 }}>
 				<View

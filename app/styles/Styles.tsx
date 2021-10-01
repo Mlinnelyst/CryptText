@@ -29,4 +29,4 @@ export default StyleSheet.create({
 	},
 });
 
-export const transitionDuration = 400;
+export const transitionDuration = 250;

@@ -55,8 +55,7 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 
 	return (
 		<Stack.Navigator
-			//initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
-			initialRouteName={'ContactsOverview'}
+			initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
 			screenOptions={{
 				cardStyle: { backgroundColor: Colors.darkBlue },
 				headerStyle: {

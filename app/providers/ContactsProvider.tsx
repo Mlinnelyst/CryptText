@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useFirstRender } from '../components/useFirstRender';
 import { sha256 } from '../cryptography/hash';
 
 export interface Contact {
@@ -8,15 +9,14 @@ export interface Contact {
 	sharedSecret: string;
 	timestamp: number;
 	conversationId: string;
-	latestMessageText: string | undefined;
-	latestMessageTs: number | undefined;
-	latestMessageSentByUser: boolean;
 }
 
 type ContactsContextType = {
+	getContacts(): Promise<void>;
+	loadingComplete: boolean;
+
 	contacts: Contact[];
 	saveContacts(newContacts: Contact[]): Promise<void>;
-	getContacts(): Promise<void>;
 	getContact(publicKey: string): Promise<Contact | undefined>;
 	createContact(publicKey: string, sharedSecret: string): Promise<void>;
 	setContact(contact: Contact): Promise<void>;
@@ -30,6 +30,16 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 	children,
 }) => {
 	const [contacts, setContactsState] = useState<Contact[]>([]);
+	const [loadingComplete, setLoadingComplete] = useState(false);
+
+	const firstRender = useFirstRender();
+
+	useEffect(() => {
+		if (!firstRender) {
+			console.log(contacts);
+			setLoadingComplete(true);
+		}
+	}, [contacts]);
 
 	const saveContacts = async (newContacts: Contact[]) => {
 		setContactsState(newContacts);
@@ -37,40 +47,6 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 	};
 
 	const getContacts = async () => {
-		//await AsyncStorage.clear();
-		/* setContactsState([
-			{
-				name: 'Some name1',
-				publicKey: '12341',
-				sharedSecret: 'abcdefg1',
-				timestamp: new Date().getTime(),
-				conversationId: await sha256('abcdefg1'),
-				latestMessageText: 'Latest message1',
-				latestMessageTs: new Date().getTime(),
-				latestMessageSentByUser: true,
-			},
-			{
-				name: 'Some name2',
-				publicKey: '12342',
-				sharedSecret: 'abcdefg2',
-				timestamp: new Date().getTime(),
-				conversationId: await sha256('abcdefg2'),
-				latestMessageText: 'Latest message2',
-				latestMessageTs: new Date().getTime(),
-				latestMessageSentByUser: true,
-			},
-			{
-				name: 'Some name3',
-				publicKey: '12343',
-				sharedSecret: 'abcdefg3',
-				timestamp: new Date().getTime(),
-				conversationId: await sha256('abcdefg3'),
-				latestMessageText: 'Latest message3',
-				latestMessageTs: new Date().getTime(),
-				latestMessageSentByUser: true,
-			},
-		]); */
-
 		var stored_contacts = await AsyncStorage.getItem('contacts');
 
 		if (!stored_contacts) {
@@ -97,9 +73,6 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 			sharedSecret,
 			timestamp: new Date().getTime(),
 			conversationId: await sha256(sharedSecret),
-			latestMessageText: undefined,
-			latestMessageTs: undefined,
-			latestMessageSentByUser: false,
 		};
 
 		const newContacts = contacts;
@@ -123,9 +96,11 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 	return (
 		<ContactsContext.Provider
 			value={{
+				getContacts,
+				loadingComplete,
+
 				contacts,
 				saveContacts,
-				getContacts,
 				getContact,
 				createContact,
 				setContact,

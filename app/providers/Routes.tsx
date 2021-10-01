@@ -17,26 +17,43 @@ import {
 import { ContactsContext } from './ContactsProvider';
 import { ClientKeyContext } from './ClientKeyProvider';
 import { MainStack } from '../nav/MainStack';
+import { MessagesContext } from './MessagesProvider';
+import { useFirstRender } from '../components/useFirstRender';
 
 interface RoutesProps {}
 
 export const Routes: React.FC<RoutesProps> = () => {
-	const { getUserData, setUserData } = useContext(UserDataContext);
-	const { getContacts } = useContext(ContactsContext);
+	const { getUserData } = useContext(UserDataContext);
+	const { getContacts, loadingComplete: contactsLoadingComplete } =
+		useContext(ContactsContext);
 	const { getClient } = useContext(ClientKeyContext);
-	const [loading, setLoading] = useState(false);
+	const { getMessages } = useContext(MessagesContext);
+	const [loading, setLoading] = useState(true);
 
 	let [fontsLoaded] = useFonts({
 		Poppins_400Regular,
 		Poppins_300Light,
 	});
 
+	const firstRender = useFirstRender();
+
 	useEffect(() => {
-		// Calculate and get data from async storage
-		Promise.all([getUserData(), getContacts(), getClient()]).then(() => {
-			setLoading(false);
-		});
-	}, []);
+		if (firstRender) {
+			const getData = async () => {
+				await getUserData();
+				await getClient();
+				await getContacts();
+				return;
+			};
+			getData();
+		}
+
+		if (contactsLoadingComplete) {
+			getMessages().then(() => {
+				setLoading(false);
+			});
+		}
+	}, [contactsLoadingComplete]);
 
 	if (loading || !fontsLoaded) {
 		return (
