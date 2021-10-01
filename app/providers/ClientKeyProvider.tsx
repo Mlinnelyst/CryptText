@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Client as DH_Client } from 'diffie-hellman-ts';
 import { sha256 } from '../cryptography/hash';
+import { useFirstRender } from '../components/useFirstRender';
 
 export declare class DhClientKeys {
 	public secret: string;
@@ -22,8 +23,10 @@ export interface Client {
 }
 
 type ClientKeyContextType = {
-	client: Client;
 	getClient(): Promise<void>;
+	loadingComplete: boolean;
+
+	client: Client;
 	calculateSharedSecret(sharedPublicKey: string): Promise<string>;
 };
 
@@ -35,6 +38,15 @@ export const ClientKeyProvider: React.FC<ClientKeyProviderProps> = ({
 	children,
 }) => {
 	const [client, setClientState] = useState<Client>({} as Client);
+	const [loadingComplete, setLoadingComplete] = useState(false);
+
+	const firstRender = useFirstRender();
+
+	useEffect(() => {
+		if (!firstRender) {
+			setLoadingComplete(true);
+		}
+	}, [client]);
 
 	const getClient = async () => {
 		// Check if client is already stored in localstorage
@@ -83,8 +95,10 @@ export const ClientKeyProvider: React.FC<ClientKeyProviderProps> = ({
 	return (
 		<ClientKeyContext.Provider
 			value={{
-				client,
 				getClient,
+				loadingComplete,
+
+				client,
 				calculateSharedSecret,
 			}}
 		>

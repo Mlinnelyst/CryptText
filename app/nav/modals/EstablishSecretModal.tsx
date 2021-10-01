@@ -46,13 +46,18 @@ export function EstablishSecretModal({
 				);
 
 				addEvent({ text: 'Creating contact', pending: true });
-				await createContact(route.params.recipientPublicKey, sharedSecret);
-				const contact = await getContact(route.params.recipientPublicKey);
+				const contact = await createContact(
+					route.params.recipientPublicKey,
+					sharedSecret
+				);
+
+				console.log('ESTABLISH CONTACT');
+				console.log(contact);
 
 				addEvent({ text: 'Navigating to conversation', pending: true });
 
 				// Remove socket hook
-				socket.off('public_key_scan_confirmed');
+				socket?.off('public_key_scan_confirmed');
 
 				setTimeout(() => {
 					navigation.reset({
@@ -64,7 +69,7 @@ export function EstablishSecretModal({
 							},
 							{
 								name: 'Chat',
-								params: { navigateToContactChat: contact },
+								params: { contact },
 							},
 						],
 					});
@@ -78,12 +83,12 @@ export function EstablishSecretModal({
 			// Emit event to scanner
 			addEvent({ text: 'Waiting for confirmation', pending: true });
 
-			socket.on('public_key_scan_confirmed', () => {
+			socket?.on('public_key_scan_confirmed', () => {
 				console.log('Public key scan confirmed');
 				sharedSecretCalculation();
 			});
 
-			socket.emit(
+			socket?.emit(
 				'scanned_public_key',
 				route.params.recipientPublicKey,
 				client.publicKey
@@ -94,7 +99,7 @@ export function EstablishSecretModal({
 
 			// Emit event to scanner
 			addEvent({ text: 'Emitting confirmation' });
-			socket.emit(
+			socket?.emit(
 				'confirm_public_key_scan',
 				route.params.recipientPublicKey,
 				client.publicKey

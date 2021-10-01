@@ -21,7 +21,7 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 		navigation.setOptions({ headerShown: contacts.length != 0 });
 
 		// Add socket listener
-		socket.on('public_key_scanned', (scanned_by_public_key: string) => {
+		socket?.on('public_key_scanned', (scanned_by_public_key: string) => {
 			console.log('Public key scanned!');
 			navigation.push('EstablishSecret', {
 				recipientPublicKey: scanned_by_public_key,
@@ -31,7 +31,7 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<'DisplayCode'>) {
 
 		return () => {
 			console.log('Removed socket on scan hook.');
-			socket.off('public_key_scanned');
+			socket?.off('public_key_scanned');
 		};
 	}, []);
 

@@ -3,17 +3,20 @@ import React, { useContext, useEffect, useState } from 'react';
 import { decrypt } from '../cryptography/encryption';
 import {
 	createMessage,
+	createMessageData,
 	Message,
 	MessageData,
 	verifyMessage,
 } from '../cryptography/message';
 import { ClientKeyContext } from './ClientKeyProvider';
 import { Contact, ContactsContext } from './ContactsProvider';
+import { SocketContext } from './SocketProvider';
 
 type MessagesContextType = {
 	getMessages(): Promise<void>;
 	getContactMessages: (contact: Contact) => MessageData[];
 	sendMessage: (contact: Contact, text: string) => Promise<void>;
+	messagesChanged: number;
 };
 
 export const MessagesContext = React.createContext({} as MessagesContextType);
@@ -25,8 +28,18 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 }) => {
 	const { client } = useContext(ClientKeyContext);
 	const { contacts } = useContext(ContactsContext);
+	const { socket } = useContext(SocketContext);
 
 	const [contactPKMessagesMap] = useState(new Map<string, MessageData[]>());
+
+	const [messagesChanged, setMessagesChanged] = useState(0);
+
+	useEffect(() => {
+		return () => {
+			console.log('MessagesProvider unhoooked socket events.');
+			socket?.off('new_message');
+		};
+	}, []);
 
 	async function fetchContactMessages(
 		contact: Contact
@@ -66,17 +79,54 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 		).sort((a, b) => b.timestamp - a.timestamp);
 	}
 
+	const getContactMessages = (contact: Contact): MessageData[] => {
+		return contactPKMessagesMap.get(contact.publicKey) ?? [];
+	};
+
 	const getMessages = async () => {
-		console.log('Contacts ' + contacts.length);
+		console.log('getMessages: Contacts ' + contacts.length);
 		for (let i = 0; i < contacts.length; i++) {
 			const c = contacts[i];
 			const messages = await fetchContactMessages(c);
 			contactPKMessagesMap.set(c.publicKey, messages);
 		}
-	};
 
-	const getContactMessages = (contact: Contact): MessageData[] => {
-		return contactPKMessagesMap.get(contact.publicKey) ?? [];
+		console.log('MessagesProvider hooked socket events.');
+
+		socket?.on(
+			'new_message',
+			async (conversationId: string, messageString: string) => {
+				console.log(conversationId + ' got a new message.');
+
+				// Find contact by conversation id:
+				const contactsFiltered = contacts.filter(
+					(c) => c.conversationId == conversationId
+				);
+
+				if (contactsFiltered.length == 0) {
+					console.log('New message event contact not found!');
+					return;
+				}
+
+				// Add received message to map
+				const c = contactsFiltered[0];
+
+				const message = JSON.parse(messageString);
+
+				const parsedData: MessageData = JSON.parse(
+					await decrypt(message.data, c.sharedSecret)
+				);
+
+				parsedData.text = decodeURIComponent(escape(decode(parsedData.text)));
+
+				const currentMessages = getContactMessages(c);
+				currentMessages.push(parsedData);
+				contactPKMessagesMap.set(c.publicKey, currentMessages);
+
+				setMessagesChanged(Math.random());
+				console.log(currentMessages[currentMessages.length - 1]);
+			}
+		);
 	};
 
 	const sendMessage = async (contact: Contact, text: string) => {
@@ -91,11 +141,24 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 			},
 			body: JSON.stringify(message),
 		});
+
+		const messageData: MessageData = {
+			senderPublicKey: client.publicKey,
+			text,
+			timestamp: new Date().getTime(),
+		};
+
+		const currentMessages = getContactMessages(contact);
+		currentMessages.push(messageData);
+		contactPKMessagesMap.set(contact.publicKey, currentMessages);
+		setMessagesChanged(Math.random());
+
+		//console.log(currentMessages[currentMessages.length - 1]);
 	};
 
 	return (
 		<MessagesContext.Provider
-			value={{ getMessages, getContactMessages, sendMessage }}
+			value={{ getMessages, getContactMessages, sendMessage, messagesChanged }}
 		>
 			{children}
 		</MessagesContext.Provider>

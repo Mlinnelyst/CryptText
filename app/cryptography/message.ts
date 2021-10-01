@@ -17,17 +17,21 @@ export interface MessageData {
 	timestamp: number;
 }
 
+export function createMessageData(client: Client, text: string): MessageData {
+	// Create message data from params
+	return {
+		senderPublicKey: client.publicKey,
+		text: encode(unescape(encodeURIComponent(text))),
+		timestamp: new Date().getTime(),
+	};
+}
+
 export async function createMessage(
 	client: Client,
 	contact: Contact,
 	text: string
 ): Promise<Message> {
-	// Create message data from params
-	const data: MessageData = {
-		senderPublicKey: client.publicKey,
-		text: encode(unescape(encodeURIComponent(text))),
-		timestamp: new Date().getTime(),
-	};
+	const data = createMessageData(client, text);
 
 	// Calculate data hash
 	const dataString = await encrypt(JSON.stringify(data), contact.sharedSecret);

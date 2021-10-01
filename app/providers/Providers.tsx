@@ -11,15 +11,15 @@ interface ProvidersProps {}
 export const Providers: React.FC<ProvidersProps> = ({}) => {
 	return (
 		<ClientKeyProvider>
-			<SocketProvider>
-				<UserDataProvider>
+			<UserDataProvider>
+				<SocketProvider>
 					<ContactsProvider>
 						<MessagesProvider>
 							<Routes />
 						</MessagesProvider>
 					</ContactsProvider>
-				</UserDataProvider>
-			</SocketProvider>
+				</SocketProvider>
+			</UserDataProvider>
 		</ClientKeyProvider>
 	);
 };

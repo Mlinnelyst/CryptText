@@ -1,8 +1,15 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
+import { useFirstRender } from '../components/useFirstRender';
 import { ClientKeyContext } from './ClientKeyProvider';
 
-type SocketContextType = { socket: Socket };
+type SocketContextType = {
+	connectSocket: () => void;
+	loadingComplete: boolean;
+
+	socket: Socket | undefined;
+};
 
 export const SocketContext = React.createContext({} as SocketContextType);
 
@@ -10,24 +17,44 @@ interface SocketProviderProps {}
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	const { client } = useContext(ClientKeyContext);
+	const [socket, setSocket] =
+		useState<Socket<DefaultEventsMap, DefaultEventsMap>>();
 
-	const socket = io(`${'http://cipher.dk'}`, {
-		auth: {
-			public_key: client.publicKey,
-		},
+	const [loadingComplete, setLoadingComplete] = useState(false);
+	const [connected, setConnected] = useState(false);
 
-		secure: true,
-		rejectUnauthorized: false,
-		reconnectionDelay: 1000,
-		reconnectionDelayMax: 5000,
-	});
+	const firstRender = useFirstRender();
 
-	socket.on('connect', () => {
-		console.log('Socket connected.');
-	});
+	useEffect(() => {
+		if (!loadingComplete && connected && !loadingComplete) {
+			setLoadingComplete(true);
+		}
+	}, [socket, connected]);
+
+	const connectSocket = () => {
+		const s = io(`${'http://cipher.dk'}`, {
+			auth: {
+				public_key: client.publicKey,
+			},
+
+			secure: true,
+			rejectUnauthorized: false,
+			reconnectionDelay: 1000,
+			reconnectionDelayMax: 5000,
+		});
+
+		s.on('connect', () => {
+			console.log('Socket connected.');
+			setConnected(true);
+		});
+
+		setSocket(s);
+	};
 
 	return (
-		<SocketContext.Provider value={{ socket: socket }}>
+		<SocketContext.Provider
+			value={{ connectSocket, loadingComplete, socket: socket }}
+		>
 			{children}
 		</SocketContext.Provider>
 	);

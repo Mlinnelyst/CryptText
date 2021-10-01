@@ -18,7 +18,7 @@ type ContactsContextType = {
 	contacts: Contact[];
 	saveContacts(newContacts: Contact[]): Promise<void>;
 	getContact(publicKey: string): Promise<Contact | undefined>;
-	createContact(publicKey: string, sharedSecret: string): Promise<void>;
+	createContact: (publicKey: string, sharedSecret: string) => Promise<Contact>;
 	setContact(contact: Contact): Promise<void>;
 };
 
@@ -36,7 +36,6 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 
 	useEffect(() => {
 		if (!firstRender) {
-			console.log(contacts);
 			setLoadingComplete(true);
 		}
 	}, [contacts]);
@@ -47,6 +46,8 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 	};
 
 	const getContacts = async () => {
+		//await AsyncStorage.clear();
+
 		var stored_contacts = await AsyncStorage.getItem('contacts');
 
 		if (!stored_contacts) {
@@ -61,10 +62,14 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 		return contacts.find((contact) => contact.publicKey == publicKey);
 	};
 
-	const createContact = async (publicKey: string, sharedSecret: string) => {
-		if (await getContact(publicKey)) {
+	const createContact = async (
+		publicKey: string,
+		sharedSecret: string
+	): Promise<Contact> => {
+		const contactExists = await getContact(publicKey);
+		if (contactExists) {
 			console.log('Contact already exists!');
-			return;
+			return contactExists;
 		}
 
 		const contact: Contact = {
@@ -78,6 +83,8 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 		const newContacts = contacts;
 		newContacts.push(contact);
 		await saveContacts(newContacts);
+
+		return contact;
 	};
 
 	const setContact = async (contact: Contact) => {

@@ -19,6 +19,7 @@ import { ClientKeyContext } from './ClientKeyProvider';
 import { MainStack } from '../nav/MainStack';
 import { MessagesContext } from './MessagesProvider';
 import { useFirstRender } from '../components/useFirstRender';
+import { SocketContext } from './SocketProvider';
 
 interface RoutesProps {}
 
@@ -26,8 +27,11 @@ export const Routes: React.FC<RoutesProps> = () => {
 	const { getUserData } = useContext(UserDataContext);
 	const { getContacts, loadingComplete: contactsLoadingComplete } =
 		useContext(ContactsContext);
-	const { getClient } = useContext(ClientKeyContext);
+	const { getClient, loadingComplete: clientLoadingComplete } =
+		useContext(ClientKeyContext);
 	const { getMessages } = useContext(MessagesContext);
+	const { connectSocket, loadingComplete: socketLoadingComplete } =
+		useContext(SocketContext);
 	const [loading, setLoading] = useState(true);
 
 	let [fontsLoaded] = useFonts({
@@ -48,12 +52,21 @@ export const Routes: React.FC<RoutesProps> = () => {
 			getData();
 		}
 
-		if (contactsLoadingComplete) {
+		if (
+			contactsLoadingComplete &&
+			clientLoadingComplete &&
+			!socketLoadingComplete
+		) {
+			connectSocket();
+		}
+
+		if (socketLoadingComplete) {
+			console.log('SOCKET COMPLETE? ' + socketLoadingComplete);
 			getMessages().then(() => {
 				setLoading(false);
 			});
 		}
-	}, [contactsLoadingComplete]);
+	}, [contactsLoadingComplete, clientLoadingComplete, socketLoadingComplete]);
 
 	if (loading || !fontsLoaded) {
 		return (
