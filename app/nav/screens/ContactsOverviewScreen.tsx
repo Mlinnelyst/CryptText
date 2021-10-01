@@ -19,7 +19,7 @@ export function ContactsOverviewScreen({
 }: MainNavProps<'ContactsOverview'>) {
 	const { contacts } = useContext(ContactsContext);
 
-	const transitionProgress = useRef(new Animated.Value(0)).current;
+	const transitionEvents = hookTransitionEvents(navigation);
 
 	useEffect(() => {
 		// Set headerright
@@ -46,10 +46,6 @@ export function ContactsOverviewScreen({
 		});
 		console.log('Contacts: ' + contacts.length);
 
-		const transitionEvents = hookTransitionEvents(
-			transitionProgress,
-			navigation
-		);
 		return () => {
 			unHookTransitionEvents(navigation, transitionEvents);
 		};
@@ -71,7 +67,7 @@ export function ContactsOverviewScreen({
 						borderTopRightRadius: 20,
 						alignSelf: 'center',
 
-						translateY: transitionProgress.interpolate({
+						translateY: transitionEvents.progress.interpolate({
 							inputRange: [0, 1],
 							outputRange: [100, 0],
 						}),

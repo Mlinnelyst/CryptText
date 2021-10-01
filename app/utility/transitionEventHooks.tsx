@@ -1,4 +1,5 @@
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useRef } from 'react';
 import { Animated } from 'react-native';
 import { MainParamList } from '../nav/MainParamList';
 import { transitionDuration } from '../styles/Styles';
@@ -6,14 +7,19 @@ import { transitionDuration } from '../styles/Styles';
 interface TransitionEvents {
 	blurEvent: () => void;
 	focusEvent: () => void;
+	progress: Animated.Value;
+	navigation: StackNavigationProp<MainParamList>;
 }
 
 export function hookTransitionEvents(
-	transitionProgress: Animated.Value,
 	navigation: StackNavigationProp<MainParamList>
 ): TransitionEvents {
+	// Check if current screen is top of navigation stack
+	const progressStartValue = navigation.getState().index == 0 ? 1 : 0;
+	const progress = useRef(new Animated.Value(progressStartValue)).current;
+
 	const blurEvent = () => {
-		Animated.timing(transitionProgress, {
+		Animated.timing(progress, {
 			toValue: 0,
 			duration: transitionDuration / 2,
 			useNativeDriver: true,
@@ -21,7 +27,7 @@ export function hookTransitionEvents(
 	};
 
 	const focusEvent = () => {
-		Animated.timing(transitionProgress, {
+		Animated.timing(progress, {
 			toValue: 1,
 			duration: transitionDuration / 2,
 			delay: transitionDuration / 2,
@@ -32,7 +38,7 @@ export function hookTransitionEvents(
 	navigation.addListener('blur', blurEvent);
 	navigation.addListener('focus', focusEvent);
 
-	return { blurEvent, focusEvent };
+	return { blurEvent, focusEvent, progress, navigation };
 }
 
 export function unHookTransitionEvents(

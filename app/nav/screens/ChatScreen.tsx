@@ -9,13 +9,9 @@ import {
 import { MainNavProps } from '../MainParamList';
 
 export function ChatScreen({ navigation }: MainNavProps<'Chat'>) {
-	const transitionProgress = useRef(new Animated.Value(0)).current;
+	const transitionEvents = hookTransitionEvents(navigation);
 
 	useEffect(() => {
-		const transitionEvents = hookTransitionEvents(
-			transitionProgress,
-			navigation
-		);
 		return () => {
 			unHookTransitionEvents(navigation, transitionEvents);
 		};
@@ -28,7 +24,7 @@ export function ChatScreen({ navigation }: MainNavProps<'Chat'>) {
 					backgroundColor: 'red',
 					width: 100,
 					height: 100,
-					translateX: transitionProgress.interpolate({
+					translateX: transitionEvents.progress.interpolate({
 						inputRange: [0, 1],
 						outputRange: [100, 0],
 					}),
