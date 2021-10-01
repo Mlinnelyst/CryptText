@@ -33,7 +33,7 @@ app.post('/chat/:conversation_id/message/:recipient_pk', (req, res) => {
 
 	console.log(message);
 
-	if (!message.data || !message.data_hash || !message.encrypted_data_hash) {
+	if (!message.data || !message.dataHash || !message.encryptedDataHash) {
 		console.log('Invalid message body.');
 		res.send('Message body invalid.');
 		return;
@@ -41,15 +41,20 @@ app.post('/chat/:conversation_id/message/:recipient_pk', (req, res) => {
 
 	add_message_to_conversation(conversation_id, message);
 
-	console.log('Emitted new message event.');
-	io.sockets.to(recipient_public_key).emit('new_message');
+	console.log(
+		'Emitted new message event for ' + recipient_public_key.slice(0, 20)
+	);
+	io.sockets
+		.to(recipient_public_key)
+		.emit('new_message', conversation_id, JSON.stringify(message));
 
 	res.send('Success.');
 });
 
 io.on('connection', (socket) => {
-	console.log('a user connected');
 	const public_key = socket.handshake.auth.public_key;
+
+	console.log('a user connected ' + public_key.slice(0, 20));
 
 	if (!public_key) {
 		socket.disconnect();
@@ -61,6 +66,7 @@ io.on('connection', (socket) => {
 	// A client has scanned another clients public key and is now asking for a response
 	socket.on('scanned_public_key', (scanned_public_key, clients_public_key) => {
 		console.log('Public key scanned, awaiting confirmation.');
+		console.log(scanned_public_key);
 		socket
 			.to(scanned_public_key)
 			.emit('public_key_scanned', clients_public_key);
