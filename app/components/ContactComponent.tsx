@@ -1,22 +1,18 @@
-import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useContext, useEffect } from 'react';
-import { Button, View, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { MainParamList } from '../nav/MainParamList';
-import { Contact, ContactsContext } from '../providers/ContactsProvider';
+import { Contact } from '../providers/ContactsProvider';
 import Colors from '../styles/Colors';
 import Styles from '../styles/Styles';
 import { ContactNameCircleComponent } from './ContactNameCircle';
 
 export function ContactComponent({
 	contact,
-	navigation,
+	onPress,
 }: {
 	contact: Contact;
-	navigation: StackNavigationProp<MainParamList, 'ContactsOverview'>;
+	onPress: () => void;
 }) {
-	const { contacts } = useContext(ContactsContext);
-
 	useEffect(() => {});
 
 	return (
@@ -28,9 +24,7 @@ export function ContactComponent({
 				marginTop: 3,
 				marginBottom: 3,
 			}}
-			onPress={() => {
-				navigation.navigate('Chat', { contact });
-			}}
+			onPress={onPress}
 		>
 			<View style={{ flex: 1, marginRight: 10 }}>
 				<ContactNameCircleComponent contact={contact} />

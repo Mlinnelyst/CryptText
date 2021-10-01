@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { Button, View, Text } from 'react-native';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Button, View, Text, Animated } from 'react-native';
 import { Contact, ContactsContext } from '../../providers/ContactsProvider';
 import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
@@ -15,6 +15,8 @@ export function ContactsOverviewScreen({
 	route,
 }: MainNavProps<'ContactsOverview'>) {
 	const { contacts } = useContext(ContactsContext);
+
+	const fadeAnim = useRef(new Animated.Value(1)).current;
 
 	useEffect(() => {
 		// Set headerright
@@ -42,9 +44,19 @@ export function ContactsOverviewScreen({
 		console.log('Contacts: ' + contacts.length);
 	});
 
+	const navigateToChat = (contact: Contact) => {
+		Animated.timing(fadeAnim, {
+			toValue: 0,
+			duration: 250,
+			useNativeDriver: true,
+		}).start(() => {
+			navigation.navigate('Chat', { contact });
+		});
+	};
+
 	return (
 		<View style={[Styles.view, {}]}>
-			<View
+			<Animated.View
 				style={[
 					Styles.view,
 					{
@@ -53,6 +65,11 @@ export function ContactsOverviewScreen({
 						borderTopLeftRadius: 20,
 						borderTopRightRadius: 20,
 						alignSelf: 'center',
+						opacity: fadeAnim,
+						translateY: fadeAnim.interpolate({
+							inputRange: [0, 1],
+							outputRange: [100, 0],
+						}),
 					},
 				]}
 			>
@@ -64,10 +81,15 @@ export function ContactsOverviewScreen({
 					}}
 					style={{ flex: 1, marginTop: 12 }}
 					renderItem={(info) => (
-						<ContactComponent contact={info.item} navigation={navigation} />
+						<ContactComponent
+							contact={info.item}
+							onPress={() => {
+								navigateToChat(info.item);
+							}}
+						/>
 					)}
 				/>
-			</View>
+			</Animated.View>
 		</View>
 	);
 }
