@@ -28,3 +28,5 @@ export default StyleSheet.create({
 		textAlignVertical: 'center',
 	},
 });
+
+export const transitionDuration = 400;

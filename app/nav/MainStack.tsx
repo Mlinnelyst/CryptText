@@ -8,7 +8,7 @@ import {
 import { MainParamList } from './MainParamList';
 import { ContactsOverviewScreen } from './screens/ContactsOverviewScreen';
 import Colors from '../styles/Colors';
-import Styles from '../styles/Styles';
+import Styles, { transitionDuration } from '../styles/Styles';
 import { ContactsContext } from '../providers/ContactsProvider';
 import { IntroScreen } from './screens/IntroScreen';
 import { DisplayCodeScreen } from './screens/DisplayCodeScreen';
@@ -23,16 +23,22 @@ const Stack = createStackNavigator<MainParamList>();
 const customTransition: TransitionPreset = {
 	gestureDirection: 'horizontal',
 	transitionSpec: {
-		open: TransitionSpecs.TransitionIOSSpec,
-		close: TransitionSpecs.TransitionIOSSpec,
+		open: {
+			animation: 'timing',
+			config: { duration: transitionDuration },
+		},
+		close: {
+			animation: 'timing',
+			config: { duration: transitionDuration },
+		},
 	},
 	headerStyleInterpolator: HeaderStyleInterpolators.forFade,
 	cardStyleInterpolator: ({ current, next, layouts }) => {
 		return {
 			cardStyle: {
-				transform: [
+				/* transform: [
 					{
-						translateX: next
+						 translateX: next
 							? next.progress.interpolate({
 									inputRange: [0, 1],
 									outputRange: [0, -layouts.screen.width],
@@ -40,10 +46,25 @@ const customTransition: TransitionPreset = {
 							: current.progress.interpolate({
 									inputRange: [0, 1],
 									outputRange: [layouts.screen.width, 0],
-							  }),
+							  }), 
 					},
-				],
+				], */
+				opacity: next
+					? next.progress.interpolate({
+							inputRange: [0, 1 / 3, (1 / 3) * 2, 1],
+							outputRange: [1, 0.5, 0, 0],
+					  })
+					: current.progress.interpolate({
+							inputRange: [0, 1 / 3, (1 / 3) * 2, 1],
+							outputRange: [0, 0, 0.5, 1],
+					  }),
 			},
+			/* overlayStyle: {
+				opacity: current.progress.interpolate({
+					inputRange: [0, 1],
+					outputRange: [0, 0.5],
+				}),
+			}, */
 		};
 	},
 };
@@ -53,7 +74,8 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 
 	return (
 		<Stack.Navigator
-			initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
+			//initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
+			initialRouteName={'ContactsOverview'}
 			screenOptions={{
 				cardStyle: { backgroundColor: Colors.darkBlue },
 				headerStyle: {

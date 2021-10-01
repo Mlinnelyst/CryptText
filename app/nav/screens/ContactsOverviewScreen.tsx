@@ -1,14 +1,17 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { Button, View, Text, Animated } from 'react-native';
 import { Contact, ContactsContext } from '../../providers/ContactsProvider';
-import Styles from '../../styles/Styles';
+import Styles, { transitionDuration } from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import { AntDesign } from '@expo/vector-icons';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../../styles/Colors';
 import { UserDataContext } from '../../providers/UserDataProvider';
 import { ContactComponent } from '../../components/ContactComponent';
-import { Divider } from 'react-native-elements/dist/divider/Divider';
+import {
+	hookTransitionEvents,
+	unHookTransitionEvents,
+} from '../../utility/transitionEventHooks';
 
 export function ContactsOverviewScreen({
 	navigation,
@@ -16,7 +19,7 @@ export function ContactsOverviewScreen({
 }: MainNavProps<'ContactsOverview'>) {
 	const { contacts } = useContext(ContactsContext);
 
-	const fadeAnim = useRef(new Animated.Value(1)).current;
+	const transitionProgress = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
 		// Set headerright
@@ -42,20 +45,22 @@ export function ContactsOverviewScreen({
 			),
 		});
 		console.log('Contacts: ' + contacts.length);
+
+		const transitionEvents = hookTransitionEvents(
+			transitionProgress,
+			navigation
+		);
+		return () => {
+			unHookTransitionEvents(navigation, transitionEvents);
+		};
 	});
 
 	const navigateToChat = (contact: Contact) => {
-		Animated.timing(fadeAnim, {
-			toValue: 0,
-			duration: 250,
-			useNativeDriver: true,
-		}).start(() => {
-			navigation.navigate('Chat', { contact });
-		});
+		navigation.navigate('Chat', { contact });
 	};
 
 	return (
-		<View style={[Styles.view, {}]}>
+		<View style={Styles.view}>
 			<Animated.View
 				style={[
 					Styles.view,
@@ -65,8 +70,8 @@ export function ContactsOverviewScreen({
 						borderTopLeftRadius: 20,
 						borderTopRightRadius: 20,
 						alignSelf: 'center',
-						opacity: fadeAnim,
-						translateY: fadeAnim.interpolate({
+
+						translateY: transitionProgress.interpolate({
 							inputRange: [0, 1],
 							outputRange: [100, 0],
 						}),
