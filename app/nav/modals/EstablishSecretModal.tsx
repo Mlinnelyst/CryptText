@@ -51,9 +51,6 @@ export function EstablishSecretModal({
 					sharedSecret
 				);
 
-				console.log('ESTABLISH CONTACT');
-				console.log(contact);
-
 				addEvent({ text: 'Navigating to conversation', pending: true });
 
 				// Remove socket hook

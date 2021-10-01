@@ -33,7 +33,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 					height: 100,
 					translateX: transitionEvents.progress.interpolate({
 						inputRange: [0, 1],
-						outputRange: [100, 0],
+						outputRange: [-100, 0],
 					}),
 				}}
 			></Animated.View>
@@ -45,7 +45,9 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 				onPress={() => {
 					sendMessage(
 						route.params.contact,
-						`Test message ${Math.random()}`
+						`Test message new ${
+							getContactMessages(route.params.contact).length
+						}`
 					).then(() => console.log('Sent'));
 				}}
 			/>

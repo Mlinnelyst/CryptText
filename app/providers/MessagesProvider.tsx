@@ -36,7 +36,6 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 
 	useEffect(() => {
 		return () => {
-			console.log('MessagesProvider unhoooked socket events.');
 			socket?.off('new_message');
 		};
 	}, []);
@@ -76,7 +75,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 					return parsedData;
 				})
 			)
-		).sort((a, b) => b.timestamp - a.timestamp);
+		).sort((a, b) => a.timestamp - b.timestamp);
 	}
 
 	const getContactMessages = (contact: Contact): MessageData[] => {
@@ -84,14 +83,11 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 	};
 
 	const getMessages = async () => {
-		console.log('getMessages: Contacts ' + contacts.length);
 		for (let i = 0; i < contacts.length; i++) {
 			const c = contacts[i];
 			const messages = await fetchContactMessages(c);
 			contactPKMessagesMap.set(c.publicKey, messages);
 		}
-
-		console.log('MessagesProvider hooked socket events.');
 
 		socket?.on(
 			'new_message',

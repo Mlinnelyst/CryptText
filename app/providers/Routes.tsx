@@ -61,7 +61,6 @@ export const Routes: React.FC<RoutesProps> = () => {
 		}
 
 		if (socketLoadingComplete) {
-			console.log('SOCKET COMPLETE? ' + socketLoadingComplete);
 			getMessages().then(() => {
 				setLoading(false);
 			});
