@@ -120,7 +120,6 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 				contactPKMessagesMap.set(c.publicKey, currentMessages);
 
 				setMessagesChanged(Math.random());
-				console.log(currentMessages[currentMessages.length - 1]);
 			}
 		);
 	};

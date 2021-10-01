@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { Animated, Button, Dimensions, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { Animated, Button } from 'react-native';
 import { MessagesContext } from '../../providers/MessagesProvider';
-import Styles, { transitionDuration } from '../../styles/Styles';
+import Styles from '../../styles/Styles';
 import {
 	hookTransitionEvents,
 	unHookTransitionEvents,
@@ -15,10 +14,6 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 	const transitionEvents = hookTransitionEvents(navigation);
 
 	useEffect(() => {
-		console.log(
-			'CONTACT MESSAGES ' + getContactMessages(route.params.contact).length
-		);
-
 		return () => {
 			unHookTransitionEvents(navigation, transitionEvents);
 		};
@@ -48,7 +43,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 						`Test message new ${
 							getContactMessages(route.params.contact).length
 						}`
-					).then(() => console.log('Sent'));
+					);
 				}}
 			/>
 		</Animated.View>
