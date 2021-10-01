@@ -36,19 +36,6 @@ const customTransition: TransitionPreset = {
 	cardStyleInterpolator: ({ current, next, layouts }) => {
 		return {
 			cardStyle: {
-				/* transform: [
-					{
-						 translateX: next
-							? next.progress.interpolate({
-									inputRange: [0, 1],
-									outputRange: [0, -layouts.screen.width],
-							  })
-							: current.progress.interpolate({
-									inputRange: [0, 1],
-									outputRange: [layouts.screen.width, 0],
-							  }), 
-					},
-				], */
 				opacity: next
 					? next.progress.interpolate({
 							inputRange: [0, 1 / 3, (1 / 3) * 2, 1],
@@ -59,12 +46,6 @@ const customTransition: TransitionPreset = {
 							outputRange: [0, 0, 0.5, 1],
 					  }),
 			},
-			/* overlayStyle: {
-				opacity: current.progress.interpolate({
-					inputRange: [0, 1],
-					outputRange: [0, 0.5],
-				}),
-			}, */
 		};
 	},
 };
@@ -74,8 +55,8 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 
 	return (
 		<Stack.Navigator
-			//initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
-			initialRouteName={'ContactsOverview'}
+			initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
+			//initialRouteName={'ContactsOverview'}
 			screenOptions={{
 				cardStyle: { backgroundColor: Colors.darkBlue },
 				headerStyle: {
