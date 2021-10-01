@@ -41,15 +41,20 @@ app.post('/chat/:conversation_id/message/:recipient_pk', (req, res) => {
 
 	add_message_to_conversation(conversation_id, message);
 
-	console.log('Emitted new message event.');
-	io.sockets.to(recipient_public_key).emit('new_message');
+	console.log(
+		'Emitted new message event for ' + recipient_public_key.slice(0, 20)
+	);
+	io.sockets
+		.to(recipient_public_key)
+		.emit('new_message', conversation_id, JSON.stringify(message));
 
 	res.send('Success.');
 });
 
 io.on('connection', (socket) => {
-	console.log('a user connected');
 	const public_key = socket.handshake.auth.public_key;
+
+	console.log('a user connected ' + public_key.slice(0, 20));
 
 	if (!public_key) {
 		socket.disconnect();
