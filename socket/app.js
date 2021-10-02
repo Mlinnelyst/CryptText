@@ -10,6 +10,9 @@ const {
 	add_message_to_conversation,
 } = require('./db');
 
+const api_port = 3001;
+const socket_port = 3002;
+
 app.get('/', (req, res) => {
 	res.send('Server response.');
 });
@@ -86,10 +89,10 @@ io.on('connection', (socket) => {
 	});
 });
 
-app.listen(3333, () => {
-	console.log('Api listening on 3333');
+app.listen(api_port, () => {
+	console.log('Api listening on ' + api_port);
 });
 
-server.listen(3334, () => {
-	console.log('Socket listening on *:3334');
+server.listen(socket_port, () => {
+	console.log('Socket listening on ' + socket_port);
 });
