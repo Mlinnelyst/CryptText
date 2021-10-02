@@ -4,7 +4,7 @@ import { Animated } from 'react-native';
 import { MainParamList } from '../nav/MainParamList';
 import { transitionDuration } from '../styles/Styles';
 
-interface TransitionEvents {
+export interface TransitionEvents {
 	blurEvent: () => void;
 	focusEvent: () => void;
 	progress: Animated.Value;

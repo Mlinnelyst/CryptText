@@ -75,7 +75,7 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 				screenOptions={{
 					...customTransition,
 					gestureDirection: 'horizontal',
-					gestureEnabled: true,
+					gestureEnabled: false,
 				}}
 			>
 				<Stack.Screen

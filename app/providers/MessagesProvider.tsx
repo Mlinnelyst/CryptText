@@ -8,6 +8,7 @@ import {
 	MessageData,
 	verifyMessage,
 } from '../cryptography/message';
+import constants from '../utility/constants';
 import { ClientKeyContext } from './ClientKeyProvider';
 import { Contact, ContactsContext } from './ContactsProvider';
 import { SocketContext } from './SocketProvider';
@@ -40,10 +41,18 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 		};
 	}, []);
 
+	const setContactMessages = (publicKey: string, messages: MessageData[]) => {
+		contactPKMessagesMap.set(
+			publicKey,
+			messages.sort((a, b) => a.timestamp - b.timestamp)
+		);
+		setMessagesChanged(Math.random());
+	};
+
 	async function fetchContactMessages(
 		contact: Contact
 	): Promise<MessageData[]> {
-		const url = `https://cipher.dk/chat/${contact.conversationId}/message`;
+		const url = `${constants.apiUrl}/chat/${contact.conversationId}/message`;
 
 		// Fetch from api
 		const messagesUnparsed = (await fetch(url, {
@@ -86,7 +95,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 		for (let i = 0; i < contacts.length; i++) {
 			const c = contacts[i];
 			const messages = await fetchContactMessages(c);
-			contactPKMessagesMap.set(c.publicKey, messages);
+			setContactMessages(c.publicKey, messages);
 		}
 
 		socket?.on(
@@ -117,16 +126,14 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 
 				const currentMessages = getContactMessages(c);
 				currentMessages.push(parsedData);
-				contactPKMessagesMap.set(c.publicKey, currentMessages);
-
-				setMessagesChanged(Math.random());
+				setContactMessages(c.publicKey, currentMessages);
 			}
 		);
 	};
 
 	const sendMessage = async (contact: Contact, text: string) => {
 		const message = await createMessage(client, contact, text);
-		const url = `https://cipher.dk/chat/${contact.conversationId}/message/${contact.publicKey}`;
+		const url = `${constants.apiUrl}/chat/${contact.conversationId}/message/${contact.publicKey}`;
 
 		// Post to api
 		await fetch(url, {
@@ -147,8 +154,6 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 		currentMessages.push(messageData);
 		contactPKMessagesMap.set(contact.publicKey, currentMessages);
 		setMessagesChanged(Math.random());
-
-		//console.log(currentMessages[currentMessages.length - 1]);
 	};
 
 	return (

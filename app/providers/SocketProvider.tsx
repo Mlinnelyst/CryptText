@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { DefaultEventsMap } from 'socket.io-client/build/typed-events';
 import { useFirstRender } from '../components/useFirstRender';
+import constants from '../utility/constants';
 import { ClientKeyContext } from './ClientKeyProvider';
 
 type SocketContextType = {
@@ -32,11 +33,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	}, [socket, connected]);
 
 	const connectSocket = () => {
-		const s = io(`${'http://cipher.dk'}`, {
+		const s = io(`${constants.socketUrl}`, {
 			auth: {
 				public_key: client.publicKey,
 			},
-
+			path: `${constants.socketPath}`,
 			secure: true,
 			rejectUnauthorized: false,
 			reconnectionDelay: 1000,

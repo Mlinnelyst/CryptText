@@ -51,21 +51,15 @@ export function ContactsOverviewScreen({
 	});
 
 	const navigateToChat = (contact: Contact) => {
-		navigation.navigate('Chat', { contact });
+		navigation.push('Chat', { contact });
 	};
 
 	return (
 		<View style={Styles.view}>
 			<Animated.View
 				style={[
-					Styles.view,
+					Styles.roundCardView,
 					{
-						backgroundColor: Colors.white,
-						width: '90%',
-						borderTopLeftRadius: 20,
-						borderTopRightRadius: 20,
-						alignSelf: 'center',
-
 						translateY: transitionEvents.progress.interpolate({
 							inputRange: [0, 1],
 							outputRange: [100, 0],

@@ -12,6 +12,14 @@ export default StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	roundCardView: {
+		flex: 1,
+		backgroundColor: Colors.white,
+		width: '90%',
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
+		alignSelf: 'center',
+	},
 	title: {
 		color: Colors.lightGray,
 		fontSize: 22,
@@ -26,6 +34,10 @@ export default StyleSheet.create({
 	centeredText: {
 		textAlign: 'center',
 		textAlignVertical: 'center',
+	},
+	chatText: {
+		fontFamily: 'Poppins_400Regular',
+		fontSize: 13,
 	},
 });
 
