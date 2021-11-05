@@ -224,9 +224,11 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               alignContent: "stretch",
             }}
             onPress={() => {
-              sendMessage(route.params.contact, `${text}`).then(() => {
-                onChangeText("");
-              });
+              if (text.length != 0) {
+                sendMessage(route.params.contact, `${text}`).then(() => {
+                  onChangeText("");
+                });
+              }
             }}
           >
             <MaterialCommunityIcons
