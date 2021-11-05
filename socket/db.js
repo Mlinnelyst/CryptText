@@ -24,6 +24,7 @@ const conversation_message_limit = 50;
 
 function add_message_to_conversation(conversation_id, message) {
 	var messages = get_conversation_messages(conversation_id);
+	message.ts = new Date().getTime();
 	messages.push(message);
 
 	// Make sure messages dont exceed max message limit
