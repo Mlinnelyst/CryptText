@@ -1,32 +1,39 @@
-import AntDesign from "@expo/vector-icons/build/AntDesign";
-import React, { useContext, useState } from "react";
+import AntDesign from '@expo/vector-icons/build/AntDesign';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   FlatList,
   Text,
   View,
-} from "react-native";
-import { ClientKeyContext } from "../../providers/ClientKeyProvider";
-import { ContactsContext } from "../../providers/ContactsProvider";
-import { SocketContext } from "../../providers/SocketProvider";
-import Styles from "../../styles/Styles";
-import { MainNavProps } from "../MainParamList";
+} from 'react-native';
+import { ClientKeyContext } from '../../providers/ClientKeyProvider';
+import { ContactsContext } from '../../providers/ContactsProvider';
+import { SocketContext } from '../../providers/SocketProvider';
+import Colors from '../../styles/Colors';
+import Styles from '../../styles/Styles';
+import { MainNavProps } from '../MainParamList';
 
 interface Event {
   text: string;
   pending?: boolean;
+  error?: boolean;
 }
 
 export function EstablishSecretModal({
   navigation,
   route,
-}: MainNavProps<"EstablishSecret">) {
+}: MainNavProps<'EstablishSecret'>) {
   const { socket } = useContext(SocketContext);
   const { client, calculateSharedSecret } = useContext(ClientKeyContext);
   const { createContact, getContact } = useContext(ContactsContext);
 
+  const [eventCount, setEventCount] = useState<number>(0);
   const [events, setEvents] = useState<Event[]>([]);
+
+  const [publicKeyConfirmed, setPublicKeyConfirmed] = useState<
+    undefined | boolean
+  >(undefined);
 
   const addEvent = (e: Event) => {
     if (events.length > 0) {
@@ -34,38 +41,52 @@ export function EstablishSecretModal({
     }
 
     events.push(e);
+    setEvents(events);
+    setEventCount(eventCount + 1);
   };
 
-  useState(() => {
+  useEffect(() => {
+    if (publicKeyConfirmed === false) {
+      socket?.off('public_key_scan_confirmed');
+
+      addEvent({ text: 'No answer from client', error: true });
+
+      setTimeout(() => {
+        navigation.goBack();
+      }, 3 * 1000);
+    }
+  }, [publicKeyConfirmed]);
+
+  useEffect(() => {
     const sharedSecretCalculation = () => {
-      addEvent({ text: "Calculating shared secret", pending: true });
+      addEvent({ text: 'Calculating shared secret', pending: true });
 
       setTimeout(async () => {
         const sharedSecret = await calculateSharedSecret(
           route.params.recipientPublicKey
         );
 
-        addEvent({ text: "Creating contact", pending: true });
+        addEvent({ text: 'Creating contact', pending: true });
         const contact = await createContact(
           route.params.recipientPublicKey,
           sharedSecret
         );
 
-        addEvent({ text: "Navigating to conversation", pending: true });
+        addEvent({ text: 'Navigating to conversation', pending: true });
 
         // Remove socket hook
-        socket?.off("public_key_scan_confirmed");
+        socket?.off('public_key_scan_confirmed');
 
         setTimeout(() => {
           navigation.reset({
             index: 0,
             routes: [
               {
-                name: "ContactsOverview",
+                name: 'ContactsOverview',
                 params: {},
               },
               {
-                name: "Chat",
+                name: 'Chat',
                 params: { contact },
               },
             ],
@@ -75,53 +96,49 @@ export function EstablishSecretModal({
     };
 
     if (route.params.clientScannedPublicKey) {
-      var publicKeyConfirmed = false;
-      addEvent({ text: "Scanned key" });
+      addEvent({ text: 'Scanned key' });
 
       // Emit event to scanner
-      addEvent({ text: "Waiting for confirmation", pending: true });
+      addEvent({ text: 'Waiting for confirmation', pending: true });
 
-      socket?.on("public_key_scan_confirmed", () => {
-        publicKeyConfirmed = true;
-        console.log("Public key scan confirmed");
+      socket?.on('public_key_scan_confirmed', () => {
+        setPublicKeyConfirmed(true);
+        console.log('Public key scan confirmed');
         sharedSecretCalculation();
       });
 
       socket?.emit(
-        "scanned_public_key",
+        'scanned_public_key',
         route.params.recipientPublicKey,
         client.publicKey
       );
+
       setTimeout(() => {
-        if (publicKeyConfirmed == false) {
-          addEvent({ text: "Public key scan failed" });
-          setTimeout(() => {
-            navigation.goBack();
-          }, 5000);
+        if (publicKeyConfirmed === undefined) {
+          setPublicKeyConfirmed(false);
         }
-      }, 5000);
+      }, 3 * 1000);
     } else {
       // Client was scanned
-      addEvent({ text: "Public key scanned" });
+      addEvent({ text: 'Public key scanned' });
 
       // Emit event to scanner
-      addEvent({ text: "Emitting confirmation" });
+      addEvent({ text: 'Emitting confirmation' });
       socket?.emit(
-        "confirm_public_key_scan",
+        'confirm_public_key_scan',
         route.params.recipientPublicKey,
         client.publicKey
       );
 
       sharedSecretCalculation();
     }
-  });
+  }, []);
 
-  const screenWidth = Dimensions.get("screen").width;
-  const codeSize = screenWidth * 0.8;
+  useEffect(() => {}, [eventCount]);
 
   return (
     <View style={Styles.centeredView}>
-      <View style={{ width: "80%", flex: 1, justifyContent: "center" }}>
+      <View style={{ width: '80%', flex: 1, justifyContent: 'center' }}>
         <View style={{ flex: 1 }}></View>
         <Text style={Styles.title}>Key exchange</Text>
         <View style={[Styles.view, { flex: 3 }]}>
@@ -131,13 +148,13 @@ export function EstablishSecretModal({
                 <View
                   style={[
                     Styles.view,
-                    { justifyContent: "space-between", flexDirection: "row" },
+                    { justifyContent: 'space-between', flexDirection: 'row' },
                   ]}
                 >
                   <Text style={[Styles.text, { flex: 1 }]}>{item.text}</Text>
                   <View
                     style={{
-                      alignItems: "flex-end",
+                      alignItems: 'flex-end',
                       width: Styles.title.fontSize,
                     }}
                   >
@@ -150,12 +167,12 @@ export function EstablishSecretModal({
                       />
                     ) : (
                       <AntDesign
-                        name={"check"}
+                        name={item.error ? 'close' : 'check'}
                         size={Styles.title.fontSize}
                         style={{
-                          color: Styles.title.color,
-                          textAlignVertical: "center",
-                          textAlign: "center",
+                          color: item.error ? Colors.red : Styles.title.color,
+                          textAlignVertical: 'center',
+                          textAlign: 'center',
                         }}
                       />
                     )}
