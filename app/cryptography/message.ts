@@ -9,6 +9,7 @@ export interface Message {
 	dataHash: string;
 	encryptedDataHash: string;
 	conversationId: string;
+	ts: number;
 }
 
 export interface MessageData {
@@ -45,6 +46,7 @@ export async function createMessage(
 		dataHash: dataHash,
 		encryptedDataHash: encryptedDataHash,
 		conversationId: contact.conversationId,
+		ts: new Date().getTime(),
 	};
 }
 

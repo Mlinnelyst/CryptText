@@ -79,6 +79,8 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 						await decrypt(message.data, contact.sharedSecret)
 					);
 
+					parsedData.timestamp = message.ts;
+
 					parsedData.text = decodeURIComponent(escape(decode(parsedData.text)));
 
 					return parsedData;
