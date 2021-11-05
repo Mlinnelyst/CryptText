@@ -34,9 +34,11 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
   const transitionEvents = hookTransitionEvents(navigation);
   const { contacts, setContact } = useContext(ContactsContext);
 
-  var messages = getContactMessages(route.params.contact);
+  var messages = getContactMessages(route.params.contact).sort(
+    (a, b) => b.timestamp - a.timestamp
+  );
 
-  const [text, onChangeText] = React.useState("Write a reply...");
+  const [text, onChangeText] = React.useState("");
   const [modalText, onChangeModalText] = React.useState(
     route.params.contact.name
   );
@@ -75,9 +77,11 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
 
   useEffect(() => {
     //setMessages(getContactMessages(route.params.contact));
-    messages = getContactMessages(route.params.contact);
+    messages = getContactMessages(route.params.contact).sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
     setTimeout(() => {
-      list?.scrollToEnd({ animated: true });
+      list?.scrollToOffset({ animated: false, offset: 0 });
     }, 100);
   }, [messagesChanged]);
 
@@ -86,7 +90,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
   useEffect(() => {
     if (list != null) {
       setTimeout(() => {
-        list?.scrollToEnd({ animated: false });
+        list?.scrollToOffset({ animated: false, offset: 0 });
       }, transitionDuration / 2);
 
       //setTimeout(() => {
@@ -125,6 +129,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           >
             <Text>New Contact Name:</Text>
             <TextInput
+              autoFocus={true}
               clearTextOnFocus={true}
               maxLength={12}
               style={{
@@ -157,6 +162,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
         ]}
       >
         <FlatList
+          inverted={true}
           ref={(list) => {
             setList(list);
           }}
@@ -175,10 +181,10 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               transitionEvents={transitionEvents}
               sentByUser={client.publicKey == info.item.senderPublicKey}
               previousMessageSentBySameUser={
-                info.index == 0
+                info.index == messages.length - 1
                   ? false
                   : messages[info.index].senderPublicKey ==
-                    messages[info.index - 1].senderPublicKey
+                    messages[info.index + 1].senderPublicKey
               }
             />
           )}
@@ -192,14 +198,13 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={80}
+          keyboardVerticalOffset={85}
           style={{
             flexDirection: "row",
             backgroundColor: "white",
           }}
         >
           <TextInput
-            clearTextOnFocus={true}
             style={{
               height: 40,
               width: "80%",
@@ -207,6 +212,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               padding: 10,
             }}
             onChangeText={onChangeText}
+            placeholder={"Write a reply..."}
             value={text}
           />
 
@@ -218,8 +224,9 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               alignContent: "stretch",
             }}
             onPress={() => {
-              //Keyboard.dismiss;
-              sendMessage(route.params.contact, `${text}`);
+              sendMessage(route.params.contact, `${text}`).then(() => {
+                onChangeText("");
+              });
             }}
           >
             <MaterialCommunityIcons
