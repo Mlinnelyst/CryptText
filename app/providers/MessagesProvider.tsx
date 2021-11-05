@@ -12,6 +12,7 @@ import constants from '../utility/constants';
 import { ClientKeyContext } from './ClientKeyProvider';
 import { Contact, ContactsContext } from './ContactsProvider';
 import { SocketContext } from './SocketProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type MessagesContextType = {
 	getMessages(): Promise<void>;
@@ -22,7 +23,7 @@ type MessagesContextType = {
 
 export const MessagesContext = React.createContext({} as MessagesContextType);
 
-interface MessagesProviderProps {}
+interface MessagesProviderProps { }
 
 export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 	children,
@@ -59,7 +60,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 			method: 'GET',
 		}).then((res) => res.json())) as Message[];
 
-		const messagesUnparsedFiltered = messagesUnparsed.filter(
+		var messagesUnparsedFiltered = messagesUnparsed.filter(
 			async (message) => await verifyMessage(client, contact, message)
 		);
 
@@ -70,6 +71,16 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 			console.log(
 				'Messages filtered length = ' + messagesUnparsedFiltered.length
 			);
+		}
+
+		// Filter new messages if they're already stored locally.
+		const localData = await AsyncStorage.getItem(contact.conversationId);
+		if (localData !== null) {
+			const localMessages: Message[] = JSON.parse(localData);
+			if (localMessages.length > 0) {
+				messagesUnparsedFiltered = messagesUnparsedFiltered
+					.filter(msg => !localMessages.includes(msg));
+			}
 		}
 
 		return (
@@ -137,6 +148,9 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 		const message = await createMessage(client, contact, text);
 		const url = `${constants.apiUrl}/chat/${contact.conversationId}/message/${contact.publicKey}`;
 
+		// Store new messages locally.
+		storeLocalMessage(contact.conversationId, message);
+
 		// Post to api
 		await fetch(url, {
 			method: 'POST',
@@ -157,6 +171,17 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 		contactPKMessagesMap.set(contact.publicKey, currentMessages);
 		setMessagesChanged(Math.random());
 	};
+
+	const storeLocalMessage = async (conversation_id: string, message: Message) => {
+		try {
+			const data = await AsyncStorage.getItem(conversation_id);
+			var messages: Message[] = data ? JSON.parse(data) : [];
+			messages.push(message);
+			await AsyncStorage.setItem(conversation_id, JSON.stringify(messages));
+		} catch (e) {
+			// console.log(e);
+		}
+	}
 
 	return (
 		<MessagesContext.Provider
