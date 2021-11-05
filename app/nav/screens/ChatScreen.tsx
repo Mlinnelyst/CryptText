@@ -10,12 +10,15 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Platform,
+  Modal,
 } from "react-native";
+import Colors from "../../styles/Colors";
 import { MessageComponent } from "../../components/MessageComponent";
 import { useFirstRender } from "../../components/useFirstRender";
 import { MessageData } from "../../cryptography/message";
 import { ClientKeyContext } from "../../providers/ClientKeyProvider";
 import { MessagesContext } from "../../providers/MessagesProvider";
+import { ContactsContext } from "../../providers/ContactsProvider";
 import Styles, { transitionDuration } from "../../styles/Styles";
 import {
   hookTransitionEvents,
@@ -29,14 +32,37 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
   const { sendMessage, messagesChanged, getContactMessages } =
     useContext(MessagesContext);
   const transitionEvents = hookTransitionEvents(navigation);
+  const { contacts, setContact } = useContext(ContactsContext);
 
   var messages = getContactMessages(route.params.contact);
 
   const [text, onChangeText] = React.useState("Write a reply...");
+  const [modalText, onChangeModalText] = React.useState("Contact Name");
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({
       headerTitle: route.params.contact.name,
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <MaterialCommunityIcons
+            name="pencil"
+            size={24}
+            color={Colors.gray}
+            style={{
+              flex: 1,
+              color: Colors.gray,
+              alignSelf: "flex-end",
+              textAlignVertical: "center",
+              marginRight: 10,
+            }}
+          />
+        </TouchableOpacity>
+      ),
     });
 
     return () => {
@@ -68,6 +94,60 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
 
   return (
     <View style={Styles.view}>
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 22,
+          }}
+        >
+          <View
+            style={{
+              margin: 20,
+              backgroundColor: "white",
+              borderRadius: 20,
+              padding: 35,
+              alignItems: "center",
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+            }}
+          >
+            <Text>New Contact Name:</Text>
+            <TextInput
+              maxLength={12}
+              style={{
+                height: 40,
+                width: "85%",
+                margin: 10,
+                padding: 5,
+                backgroundColor: Colors.lightGray,
+              }}
+              onChangeText={onChangeModalText}
+              value={modalText}
+            />
+            <Button
+              title="Done"
+              onPress={() => {
+                var contacts = route.params.contact;
+                contacts.name = modalText;
+                setContact(contacts);
+                navigation.setOptions({
+                  headerTitle: route.params.contact.name,
+                });
+                setModalVisible(!modalVisible);
+              }}
+            ></Button>
+          </View>
+        </View>
+      </Modal>
       <Animated.View
         style={[
           Styles.roundCardView,
@@ -119,6 +199,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           }}
         >
           <TextInput
+            clearTextOnFocus={true}
             style={{
               height: 40,
               width: "80%",
@@ -137,7 +218,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               alignContent: "stretch",
             }}
             onPress={() => {
-              Keyboard.dismiss;
+              //Keyboard.dismiss;
               sendMessage(route.params.contact, `${text}`);
             }}
           >
