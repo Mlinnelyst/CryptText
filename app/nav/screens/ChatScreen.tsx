@@ -1,111 +1,159 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Button, FlatList, View, Text } from 'react-native';
-import { MessageComponent } from '../../components/MessageComponent';
-import { useFirstRender } from '../../components/useFirstRender';
-import { MessageData } from '../../cryptography/message';
-import { ClientKeyContext } from '../../providers/ClientKeyProvider';
-import { MessagesContext } from '../../providers/MessagesProvider';
-import Styles, { transitionDuration } from '../../styles/Styles';
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
-	hookTransitionEvents,
-	unHookTransitionEvents,
-} from '../../utility/transitionEventHooks';
-import { MainNavProps } from '../MainParamList';
+  Animated,
+  Button,
+  FlatList,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Keyboard,
+  Platform,
+} from "react-native";
+import { MessageComponent } from "../../components/MessageComponent";
+import { useFirstRender } from "../../components/useFirstRender";
+import { MessageData } from "../../cryptography/message";
+import { ClientKeyContext } from "../../providers/ClientKeyProvider";
+import { MessagesContext } from "../../providers/MessagesProvider";
+import Styles, { transitionDuration } from "../../styles/Styles";
+import {
+  hookTransitionEvents,
+  unHookTransitionEvents,
+} from "../../utility/transitionEventHooks";
+import { MainNavProps } from "../MainParamList";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
-	const { client } = useContext(ClientKeyContext);
-	const { sendMessage, messagesChanged, getContactMessages } =
-		useContext(MessagesContext);
-	const transitionEvents = hookTransitionEvents(navigation);
+export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
+  const { client } = useContext(ClientKeyContext);
+  const { sendMessage, messagesChanged, getContactMessages } =
+    useContext(MessagesContext);
+  const transitionEvents = hookTransitionEvents(navigation);
 
-	var messages = getContactMessages(route.params.contact);
+  var messages = getContactMessages(route.params.contact);
 
-	useEffect(() => {
-		navigation.setOptions({
-			headerTitle: route.params.contact.name,
-		});
+  const [text, onChangeText] = React.useState("Write a reply...");
 
-		return () => {
-			unHookTransitionEvents(navigation, transitionEvents);
-		};
-	}, []);
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: route.params.contact.name,
+    });
 
-	useEffect(() => {
-		//setMessages(getContactMessages(route.params.contact));
-		messages = getContactMessages(route.params.contact);
-		setTimeout(() => {
-			list?.scrollToEnd({ animated: true });
-		}, 100);
-	}, [messagesChanged]);
+    return () => {
+      unHookTransitionEvents(navigation, transitionEvents);
+    };
+  }, []);
 
-	const [list, setList] = useState<FlatList<MessageData> | null>(null);
+  useEffect(() => {
+    //setMessages(getContactMessages(route.params.contact));
+    messages = getContactMessages(route.params.contact);
+    setTimeout(() => {
+      list?.scrollToEnd({ animated: true });
+    }, 100);
+  }, [messagesChanged]);
 
-	useEffect(() => {
-		if (list != null) {
-			setTimeout(() => {
-				list?.scrollToEnd({ animated: false });
-			}, transitionDuration / 2);
+  const [list, setList] = useState<FlatList<MessageData> | null>(null);
 
-			//setTimeout(() => {
-			//setMessages(getContactMessages(route.params.contact));
-			//}, transitionDuration);
-		}
-	}, [list]);
+  useEffect(() => {
+    if (list != null) {
+      setTimeout(() => {
+        list?.scrollToEnd({ animated: false });
+      }, transitionDuration / 2);
 
-	return (
-		<View style={Styles.view}>
-			<Animated.View
-				style={[
-					Styles.roundCardView,
-					{
-						backgroundColor: 'transparent',
-					},
-				]}
-			>
-				<FlatList
-					ref={(list) => {
-						setList(list);
-					}}
-					data={messages}
-					keyExtractor={(message) => {
-						return message.timestamp.toString();
-					}}
-					style={{
-						marginTop: 12,
-						flex: 1,
-					}}
-					renderItem={(info) => (
-						<MessageComponent
-							message={info.item}
-							transitionEvents={transitionEvents}
-							sentByUser={client.publicKey == info.item.senderPublicKey}
-							previousMessageSentBySameUser={
-								info.index == 0
-									? false
-									: messages[info.index].senderPublicKey ==
-									  messages[info.index - 1].senderPublicKey
-							}
-						/>
-					)}
-					showsVerticalScrollIndicator={true}
-					contentContainerStyle={{
-						justifyContent: 'flex-end',
-					}}
-					scrollEnabled={true}
-					initialNumToRender={messages.length}
-				/>
-				<Button
-					title={`Send debug message ${
-						getContactMessages(route.params.contact).length
-					}`}
-					onPress={() => {
-						sendMessage(
-							route.params.contact,
-							`Test message ${new Date().toISOString()}`
-						);
-					}}
-				/>
-			</Animated.View>
-		</View>
-	);
+      //setTimeout(() => {
+      //setMessages(getContactMessages(route.params.contact));
+      //}, transitionDuration);
+    }
+  }, [list]);
+
+  return (
+    <View style={Styles.view}>
+      <Animated.View
+        style={[
+          Styles.roundCardView,
+          {
+            backgroundColor: "white",
+          },
+        ]}
+      >
+        <FlatList
+          ref={(list) => {
+            setList(list);
+          }}
+          data={messages}
+          keyExtractor={(message) => {
+            return message.timestamp.toString();
+          }}
+          style={{
+            margin: 10,
+
+            flex: 1,
+          }}
+          renderItem={(info) => (
+            <MessageComponent
+              message={info.item}
+              transitionEvents={transitionEvents}
+              sentByUser={client.publicKey == info.item.senderPublicKey}
+              previousMessageSentBySameUser={
+                info.index == 0
+                  ? false
+                  : messages[info.index].senderPublicKey ==
+                    messages[info.index - 1].senderPublicKey
+              }
+            />
+          )}
+          showsVerticalScrollIndicator={true}
+          contentContainerStyle={{
+            justifyContent: "flex-end",
+          }}
+          scrollEnabled={true}
+          initialNumToRender={messages.length}
+        />
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={80}
+          style={{
+            flexDirection: "row",
+            backgroundColor: "white",
+          }}
+        >
+          <TextInput
+            style={{
+              height: 40,
+              width: "80%",
+              margin: 5,
+              padding: 10,
+            }}
+            onChangeText={onChangeText}
+            value={text}
+          />
+
+          <TouchableOpacity
+            style={{
+              width: "20%",
+              height: 60,
+              flexDirection: "row",
+              alignContent: "stretch",
+            }}
+            onPress={() => {
+              Keyboard.dismiss;
+              sendMessage(route.params.contact, `${text}`);
+            }}
+          >
+            <MaterialCommunityIcons
+              name="send"
+              size={40}
+              color="blue"
+              style={{
+                alignSelf: "center",
+                textAlignVertical: "center",
+                paddingLeft: 10,
+              }}
+            />
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </Animated.View>
+    </View>
+  );
 }
