@@ -24,8 +24,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 	const [loadingComplete, setLoadingComplete] = useState(false);
 	const [connected, setConnected] = useState(false);
 
-	const firstRender = useFirstRender();
-
 	useEffect(() => {
 		if (!loadingComplete && connected && !loadingComplete) {
 			setLoadingComplete(true);

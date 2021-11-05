@@ -87,22 +87,20 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 							}
 						/>
 					)}
-					showsVerticalScrollIndicator={true}
+					showsVerticalScrollIndicator={false}
 					contentContainerStyle={{
 						justifyContent: 'flex-end',
 					}}
 					scrollEnabled={true}
 					initialNumToRender={messages.length}
+					removeClippedSubviews={true}
 				/>
 				<Button
 					title={`Send debug message ${
 						getContactMessages(route.params.contact).length
 					}`}
 					onPress={() => {
-						sendMessage(
-							route.params.contact,
-							`Test message ${new Date().toISOString()}`
-						);
+						sendMessage(route.params.contact, `2 ${new Date().toISOString()}`);
 					}}
 				/>
 			</Animated.View>
