@@ -37,7 +37,9 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
   var messages = getContactMessages(route.params.contact);
 
   const [text, onChangeText] = React.useState("Write a reply...");
-  const [modalText, onChangeModalText] = React.useState("Contact Name");
+  const [modalText, onChangeModalText] = React.useState(
+    route.params.contact.name
+  );
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -58,7 +60,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               color: Colors.gray,
               alignSelf: "flex-end",
               textAlignVertical: "center",
-              marginRight: 10,
+              marginRight: 30,
+              marginTop: 5,
             }}
           />
         </TouchableOpacity>
@@ -68,7 +71,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
     return () => {
       unHookTransitionEvents(navigation, transitionEvents);
     };
-  }, []);
+  }, [route.params.contact.name]);
 
   useEffect(() => {
     //setMessages(getContactMessages(route.params.contact));
@@ -122,6 +125,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           >
             <Text>New Contact Name:</Text>
             <TextInput
+              clearTextOnFocus={true}
               maxLength={12}
               style={{
                 height: 40,
@@ -136,12 +140,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
             <Button
               title="Done"
               onPress={() => {
-                var contacts = route.params.contact;
-                contacts.name = modalText;
-                setContact(contacts);
-                navigation.setOptions({
-                  headerTitle: route.params.contact.name,
-                });
+                route.params.contact.name = modalText;
+                setContact(route.params.contact);
                 setModalVisible(!modalVisible);
               }}
             ></Button>
