@@ -131,6 +131,9 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 
 				const message = JSON.parse(messageString);
 
+				// Store new messages locally.
+				storeLocalMessage(conversationId, message);
+
 				const parsedData: MessageData = JSON.parse(
 					await decrypt(message.data, c.sharedSecret)
 				);
