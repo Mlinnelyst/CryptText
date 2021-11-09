@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
-import { useFirstRender } from "../components/useFirstRender";
-import { sha256 } from "../cryptography/hash";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { useFirstRender } from '../components/useFirstRender';
+import { sha256 } from '../cryptography/hash';
 
 export interface Contact {
   name: string;
@@ -9,6 +9,7 @@ export interface Contact {
   sharedSecret: string;
   timestamp: number;
   conversationId: string;
+  unreadMessages: number;
 }
 
 type ContactsContextType = {
@@ -42,13 +43,13 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
 
   const saveContacts = async (newContacts: Contact[]) => {
     setContactsState(newContacts);
-    await AsyncStorage.setItem("contacts", JSON.stringify(newContacts));
+    await AsyncStorage.setItem('contacts', JSON.stringify(newContacts));
   };
 
   const getContacts = async () => {
     //await AsyncStorage.clear();
 
-    var stored_contacts = await AsyncStorage.getItem("contacts");
+    var stored_contacts = await AsyncStorage.getItem('contacts');
 
     if (!stored_contacts) {
       await saveContacts([]);
@@ -68,16 +69,17 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
   ): Promise<Contact> => {
     const contactExists = await getContact(publicKey);
     if (contactExists) {
-      console.log("Contact already exists!");
+      console.log('Contact already exists!');
       return contactExists;
     }
 
     const contact: Contact = {
-      name: "New contact",
+      name: 'New contact',
       publicKey,
       sharedSecret,
       timestamp: new Date().getTime(),
       conversationId: await sha256(sharedSecret),
+      unreadMessages: 0,
     };
 
     const newContacts = contacts;

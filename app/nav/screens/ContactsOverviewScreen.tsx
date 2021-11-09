@@ -1,23 +1,23 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { Button, View, Text, Animated } from "react-native";
-import { Contact, ContactsContext } from "../../providers/ContactsProvider";
-import Styles, { transitionDuration } from "../../styles/Styles";
-import { MainNavProps } from "../MainParamList";
-import { AntDesign } from "@expo/vector-icons";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import Colors from "../../styles/Colors";
-import { UserDataContext } from "../../providers/UserDataProvider";
-import { ContactComponent } from "../../components/ContactComponent";
+import React, { useContext, useEffect, useRef } from 'react';
+import { Button, View, Text, Animated } from 'react-native';
+import { Contact, ContactsContext } from '../../providers/ContactsProvider';
+import Styles, { transitionDuration } from '../../styles/Styles';
+import { MainNavProps } from '../MainParamList';
+import { AntDesign } from '@expo/vector-icons';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import Colors from '../../styles/Colors';
+import { UserDataContext } from '../../providers/UserDataProvider';
+import { ContactComponent } from '../../components/ContactComponent';
 import {
   hookTransitionEvents,
   unHookTransitionEvents,
-} from "../../utility/transitionEventHooks";
+} from '../../utility/transitionEventHooks';
 
 export function ContactsOverviewScreen({
   navigation,
   route,
-}: MainNavProps<"ContactsOverview">) {
-  const { contacts } = useContext(ContactsContext);
+}: MainNavProps<'ContactsOverview'>) {
+  const { contacts, setContact } = useContext(ContactsContext);
 
   const transitionEvents = hookTransitionEvents(navigation);
 
@@ -27,17 +27,17 @@ export function ContactsOverviewScreen({
       headerRight: () => (
         <TouchableOpacity
           onPress={() => {
-            navigation.push("DisplayCode");
+            navigation.push('DisplayCode');
           }}
         >
           <AntDesign
-            name={"plus"}
+            name={'plus'}
             size={30}
             style={{
               flex: 1,
               color: Colors.gray,
-              alignSelf: "flex-end",
-              textAlignVertical: "center",
+              alignSelf: 'flex-end',
+              textAlignVertical: 'center',
               marginRight: 10,
             }}
           />
@@ -51,7 +51,9 @@ export function ContactsOverviewScreen({
   });
 
   const navigateToChat = (contact: Contact) => {
-    navigation.push("Chat", { contact });
+    contact.unreadMessages = 0;
+    setContact(contact);
+    navigation.push('Chat', { contact });
   };
 
   return (
