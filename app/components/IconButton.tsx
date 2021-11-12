@@ -16,12 +16,10 @@ const borderRadius = 25;
 
 export default (props: Props) => {
 	const height = props.height ?? 55;
-	const width = props.width ?? 200;
 
 	return (
 		<TouchableOpacity
 			style={{
-				width: width,
 				height: height,
 				flexDirection: 'row',
 			}}
@@ -29,7 +27,8 @@ export default (props: Props) => {
 		>
 			<View
 				style={{
-					flex: 1,
+                    paddingLeft: 26,
+                    paddingRight: 18,
 					backgroundColor: Colors.lighterDarkBlue,
 					borderTopLeftRadius: borderRadius,
 					borderBottomLeftRadius: borderRadius,
@@ -39,9 +38,9 @@ export default (props: Props) => {
 				<AntDesign
 					// @ts-ignore
 					name={props.iconName}
-					size={height * 0.6}
+					size={height * 0.5}
 					style={{
-						color: Styles.title.color,
+						color: Styles.buttonText.color,
 						alignSelf: 'center',
 						textAlignVertical: 'center',
 					}}
@@ -49,21 +48,14 @@ export default (props: Props) => {
 			</View>
 			<View
 				style={{
-					flex: 3,
+                    flex: 1,
 					backgroundColor: Colors.blue,
 					borderTopRightRadius: borderRadius,
 					borderBottomRightRadius: borderRadius,
 				}}
 			>
 				<Text
-					style={[
-						Styles.title,
-						Styles.centeredText,
-						{
-							flex: 1,
-							lineHeight: height,
-						},
-					]}
+					style={[Styles.buttonText, { lineHeight: height - 2 }]}
 				>
 					{props.text}
 				</Text>

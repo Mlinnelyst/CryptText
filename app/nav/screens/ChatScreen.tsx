@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Animated, Button, FlatList, View, Text } from 'react-native';
 import { MessageComponent } from '../../components/MessageComponent';
-import { useFirstRender } from '../../components/useFirstRender';
 import { MessageData } from '../../cryptography/message';
 import { ClientKeyContext } from '../../providers/ClientKeyProvider';
 import { MessagesContext } from '../../providers/MessagesProvider';
