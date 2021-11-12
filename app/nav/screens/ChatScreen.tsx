@@ -35,9 +35,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
   const transitionEvents = hookTransitionEvents(navigation);
   const { contacts, setContact } = useContext(ContactsContext);
 
-  var messages = getContactMessages(route.params.contact).sort(
-    (a, b) => b.timestamp - a.timestamp
-  );
+  var messages = getContactMessages(route.params.contact);
 
   const [text, onChangeText] = React.useState('');
   const [modalText, onChangeModalText] = React.useState(
@@ -78,9 +76,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 
   useEffect(() => {
     //setMessages(getContactMessages(route.params.contact));
-    messages = getContactMessages(route.params.contact).sort(
-      (a, b) => b.timestamp - a.timestamp
-    );
+    messages = getContactMessages(route.params.contact);
     setTimeout(() => {
       list?.scrollToOffset({ animated: false, offset: 0 });
     }, 100);

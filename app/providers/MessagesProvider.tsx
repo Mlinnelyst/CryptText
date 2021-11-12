@@ -45,7 +45,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 	const setContactMessages = (publicKey: string, messages: MessageData[]) => {
 		contactPKMessagesMap.set(
 			publicKey,
-			messages.sort((a, b) => a.timestamp - b.timestamp)
+			messages
 		);
 		setMessagesChanged(Math.random());
 	};
@@ -83,6 +83,8 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 			}
 		}
 
+		messagesUnparsedFiltered.sort((a, b) => b.ts - a.ts);
+
 		return (
 			await Promise.all(
 				messagesUnparsedFiltered.map(async (message, index) => {
@@ -97,7 +99,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 					return parsedData;
 				})
 			)
-		).sort((a, b) => a.timestamp - b.timestamp);
+		);
 	}
 
 	const getContactMessages = (contact: Contact): MessageData[] => {
@@ -142,6 +144,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 
 				const currentMessages = getContactMessages(c);
 				currentMessages.push(parsedData);
+				currentMessages.sort((a, b) => b.timestamp - a.timestamp);
 				setContactMessages(c.publicKey, currentMessages);
 			}
 		);
@@ -171,6 +174,7 @@ export const MessagesProvider: React.FC<MessagesProviderProps> = ({
 
 		const currentMessages = getContactMessages(contact);
 		currentMessages.push(messageData);
+		currentMessages.sort((a, b) => b.timestamp - a.timestamp);
 		contactPKMessagesMap.set(contact.publicKey, currentMessages);
 		setMessagesChanged(Math.random());
 	};
