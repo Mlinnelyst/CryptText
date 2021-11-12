@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Button,
@@ -11,23 +11,24 @@ import {
   Keyboard,
   Platform,
   Modal,
-} from "react-native";
-import Colors from "../../styles/Colors";
-import { MessageComponent } from "../../components/MessageComponent";
-import { useFirstRender } from "../../components/useFirstRender";
-import { MessageData } from "../../cryptography/message";
-import { ClientKeyContext } from "../../providers/ClientKeyProvider";
-import { MessagesContext } from "../../providers/MessagesProvider";
-import { ContactsContext } from "../../providers/ContactsProvider";
-import Styles, { transitionDuration } from "../../styles/Styles";
+} from 'react-native';
+import Colors from '../../styles/Colors';
+import { MessageComponent } from '../../components/MessageComponent';
+import { useFirstRender } from '../../components/useFirstRender';
+import { MessageData } from '../../cryptography/message';
+import { ClientKeyContext } from '../../providers/ClientKeyProvider';
+import { MessagesContext } from '../../providers/MessagesProvider';
+import { ContactsContext } from '../../providers/ContactsProvider';
+import Styles, { transitionDuration } from '../../styles/Styles';
 import {
   hookTransitionEvents,
   unHookTransitionEvents,
-} from "../../utility/transitionEventHooks";
-import { MainNavProps } from "../MainParamList";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+} from '../../utility/transitionEventHooks';
+import { MainNavProps } from '../MainParamList';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
+export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
   const { client } = useContext(ClientKeyContext);
   const { sendMessage, messagesChanged, getContactMessages } =
     useContext(MessagesContext);
@@ -38,7 +39,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
     (a, b) => b.timestamp - a.timestamp
   );
 
-  const [text, onChangeText] = React.useState("");
+  const [text, onChangeText] = React.useState('');
   const [modalText, onChangeModalText] = React.useState(
     route.params.contact.name
   );
@@ -60,8 +61,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
             style={{
               flex: 1,
               color: Colors.gray,
-              alignSelf: "flex-end",
-              textAlignVertical: "center",
+              alignSelf: 'flex-end',
+              textAlignVertical: 'center',
               marginRight: 30,
               marginTop: 5,
             }}
@@ -99,25 +100,36 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
     }
   }, [list]);
 
+  useEffect(() => {
+    async function load() {
+      await AsyncStorage.setItem(
+        'enteredChatTimestamp',
+        new Date().valueOf().toString()
+      );
+    }
+
+    load();
+  });
+
   return (
     <View style={Styles.view}>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View
           style={{
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: 'center',
+            alignItems: 'center',
             marginTop: 22,
           }}
         >
           <View
             style={{
               margin: 20,
-              backgroundColor: "white",
+              backgroundColor: 'white',
               borderRadius: 20,
               padding: 35,
-              alignItems: "center",
-              shadowColor: "#000",
+              alignItems: 'center',
+              shadowColor: '#000',
               shadowOffset: {
                 width: 0,
                 height: 2,
@@ -134,7 +146,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               maxLength={12}
               style={{
                 height: 40,
-                width: "85%",
+                width: '85%',
                 margin: 10,
                 padding: 5,
                 backgroundColor: Colors.lightGray,
@@ -157,7 +169,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
         style={[
           Styles.roundCardView,
           {
-            backgroundColor: "white",
+            backgroundColor: 'white',
           },
         ]}
       >
@@ -190,43 +202,43 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           )}
           showsVerticalScrollIndicator={true}
           contentContainerStyle={{
-            justifyContent: "flex-end",
+            justifyContent: 'flex-end',
           }}
           scrollEnabled={true}
           initialNumToRender={messages.length}
         />
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={85}
           style={{
-            flexDirection: "row",
-            backgroundColor: "white",
+            flexDirection: 'row',
+            backgroundColor: 'white',
           }}
         >
           <TextInput
             style={{
               height: 40,
-              width: "80%",
+              width: '80%',
               margin: 5,
               padding: 10,
             }}
             onChangeText={onChangeText}
-            placeholder={"Write a reply..."}
+            placeholder={'Write a reply...'}
             value={text}
           />
 
           <TouchableOpacity
             style={{
-              width: "20%",
+              width: '20%',
               height: 60,
-              flexDirection: "row",
-              alignContent: "stretch",
+              flexDirection: 'row',
+              alignContent: 'stretch',
             }}
             onPress={() => {
               if (text.length != 0) {
                 sendMessage(route.params.contact, `${text}`).then(() => {
-                  onChangeText("");
+                  onChangeText('');
                 });
               }
             }}
@@ -236,8 +248,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               size={40}
               color="blue"
               style={{
-                alignSelf: "center",
-                textAlignVertical: "center",
+                alignSelf: 'center',
+                textAlignVertical: 'center',
                 paddingLeft: 10,
               }}
             />

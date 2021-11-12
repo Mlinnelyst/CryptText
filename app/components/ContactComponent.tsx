@@ -1,7 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { MessageData } from '../cryptography/message';
+import { ClientKeyContext } from '../providers/ClientKeyProvider';
 import { Contact, ContactsContext } from '../providers/ContactsProvider';
 import { MessagesContext } from '../providers/MessagesProvider';
 import Colors from '../styles/Colors';
@@ -27,20 +29,58 @@ export function ContactComponent({
   contact: Contact;
   onPress: () => void;
 }) {
-  const { setContact } = useContext(ContactsContext);
+  const { client } = useContext(ClientKeyContext);
   const { getContactMessages, messagesChanged } = useContext(MessagesContext);
   const [latestMessage, setLatestMessage] = useState<MessageData | undefined>();
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [timestamp, setTimestamp] = useState(Date.now());
+
+  const loadUnreadMessages = (messages: MessageData[]) => {
+    setUnreadMessages(
+      messages
+        .filter((data) => data.senderPublicKey !== client.publicKey)
+        .filter((data) => data.timestamp > timestamp).length
+    );
+  };
+
+  useEffect(() => {
+    async function load() {
+      const messages = getContactMessages(contact);
+      const loadTimestamp = await AsyncStorage.getItem('enteredChatTimestamp');
+
+      if (messages.length > 0) {
+        setUnreadMessages(
+          messages
+            .filter((data) => data.senderPublicKey !== client.publicKey)
+            .filter(
+              (data) =>
+                new Date(data.timestamp) > new Date(Number(loadTimestamp))
+            ).length
+        );
+      }
+    }
+
+    load();
+  });
+
+  useEffect(() => {
+    const messages = getContactMessages(contact);
+
+    if (messages.length > 0) {
+      loadUnreadMessages(messages);
+    }
+  }, [timestamp]);
 
   useEffect(() => {
     const messages = getContactMessages(contact);
 
     if (messages.length > 0) {
       setLatestMessage(messages[messages.length - 1]);
-      contact.unreadMessages++;
+      loadUnreadMessages(messages);
     }
   }, [messagesChanged]);
 
-  useEffect(() => {}, [contact.name, contact.unreadMessages]);
+  useEffect(() => {}, [contact.name]);
 
   return (
     <TouchableOpacity
@@ -51,7 +91,10 @@ export function ContactComponent({
         marginTop: 3,
         marginBottom: 3,
       }}
-      onPress={onPress}
+      onPress={() => {
+        onPress();
+        setTimestamp(Date.now());
+      }}
     >
       <View style={{ flex: 1, marginRight: 10 }}>
         <ContactNameCircleComponent contact={contact} />
@@ -81,7 +124,7 @@ export function ContactComponent({
       </View>
 
       <View>
-        {contact.unreadMessages > 0 && (
+        {unreadMessages > 0 && (
           <Text
             style={{
               textAlign: 'center',
@@ -97,7 +140,7 @@ export function ContactComponent({
               marginRight: 10,
             }}
           >
-            {contact.unreadMessages}
+            {unreadMessages}
           </Text>
         )}
       </View>

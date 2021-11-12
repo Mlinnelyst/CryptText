@@ -17,7 +17,7 @@ export function ContactsOverviewScreen({
   navigation,
   route,
 }: MainNavProps<'ContactsOverview'>) {
-  const { contacts, setContact } = useContext(ContactsContext);
+  const { contacts } = useContext(ContactsContext);
 
   const transitionEvents = hookTransitionEvents(navigation);
 
@@ -51,8 +51,6 @@ export function ContactsOverviewScreen({
   });
 
   const navigateToChat = (contact: Contact) => {
-    contact.unreadMessages = 0;
-    setContact(contact);
     navigation.push('Chat', { contact });
   };
 

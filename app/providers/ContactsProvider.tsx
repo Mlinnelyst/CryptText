@@ -9,7 +9,6 @@ export interface Contact {
   sharedSecret: string;
   timestamp: number;
   conversationId: string;
-  unreadMessages: number;
 }
 
 type ContactsContextType = {
@@ -79,7 +78,6 @@ export const ContactsProvider: React.FC<ContactsProviderProps> = ({
       sharedSecret,
       timestamp: new Date().getTime(),
       conversationId: await sha256(sharedSecret),
-      unreadMessages: 0,
     };
 
     const newContacts = contacts;
