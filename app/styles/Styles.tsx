@@ -57,7 +57,7 @@ export default StyleSheet.create({
 		color: Colors.white,
         flex: 1,
         textAlign: 'center',
-    }
+    },
 });
 
 export const transitionDuration = 250;

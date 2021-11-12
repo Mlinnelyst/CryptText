@@ -1,6 +1,6 @@
-import { decode } from 'base-64';
-import React, { useContext, useEffect, useState } from 'react';
-import { decrypt } from '../cryptography/encryption';
+import { decode } from "base-64";
+import React, { useContext, useEffect, useState } from "react";
+import { decrypt } from "../cryptography/encryption";
 import {
 	createMessage,
 	createMessageData,
@@ -15,10 +15,10 @@ import { SocketContext } from './SocketProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type MessagesContextType = {
-	getMessages(): Promise<void>;
-	getContactMessages: (contact: Contact) => MessageData[];
-	sendMessage: (contact: Contact, text: string) => Promise<void>;
-	messagesChanged: number;
+  getMessages(): Promise<void>;
+  getContactMessages: (contact: Contact) => MessageData[];
+  sendMessage: (contact: Contact, text: string) => Promise<void>;
+  messagesChanged: number;
 };
 
 export const MessagesContext = React.createContext({} as MessagesContextType);
@@ -26,7 +26,7 @@ export const MessagesContext = React.createContext({} as MessagesContextType);
 interface MessagesProviderProps { }
 
 export const MessagesProvider: React.FC<MessagesProviderProps> = ({
-	children,
+  children,
 }) => {
 	const { client } = useContext(ClientKeyContext);
 	const { contacts } = useContext(ContactsContext);
