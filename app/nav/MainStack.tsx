@@ -60,12 +60,18 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 				cardStyle: { backgroundColor: Colors.darkBlue },
 				headerStyle: {
 					backgroundColor: Colors.darkBlue,
+                    shadowRadius: 0,
+                    shadowOffset: {
+                        height: 0,
+                    },
 				},
 				headerTitleStyle: {
 					...Styles.title,
 					flex: 1,
 					textAlignVertical: 'center',
-					marginTop: 12,
+					marginTop: 0,
+                    borderBottomWidth: 0,
+                    borderBottomColor: 'transparent',
 				},
 				headerTitleAlign: 'center',
 				headerTintColor: Styles.title.color,

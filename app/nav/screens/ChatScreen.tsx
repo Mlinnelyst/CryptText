@@ -171,7 +171,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           }}
           style={{
             margin: 10,
-
+            marginBottom: 16,
             flex: 1,
           }}
           renderItem={(info) => (
@@ -201,14 +201,17 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           style={{
             flexDirection: "row",
             backgroundColor: "white",
+            borderTopWidth: 1,
+            borderTopColor: Colors.lightGray,
           }}
         >
           <TextInput
             style={{
-              height: 40,
-              width: "80%",
-              margin: 5,
-              padding: 10,
+                flex: 1,
+                height: 40,
+                margin: 5,
+                marginBottom: 16,
+                padding: 10,
             }}
             onChangeText={onChangeText}
             placeholder={"Write a reply..."}
@@ -217,7 +220,6 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
 
           <TouchableOpacity
             style={{
-              width: "20%",
               height: 60,
               flexDirection: "row",
               alignContent: "stretch",
@@ -232,12 +234,14 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           >
             <MaterialCommunityIcons
               name="send"
-              size={40}
+              size={28}
               color="blue"
               style={{
                 alignSelf: "center",
                 textAlignVertical: "center",
-                paddingLeft: 10,
+                paddingLeft: 0,
+                paddingRight: 14,
+                paddingBottom: 4,
               }}
             />
           </TouchableOpacity>
