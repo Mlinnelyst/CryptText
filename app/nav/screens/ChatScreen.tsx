@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Button,
@@ -26,19 +26,18 @@ import {
 import { MainNavProps } from "../MainParamList";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Screen from "../../components/Screen";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
+export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
   const { client } = useContext(ClientKeyContext);
   const { sendMessage, messagesChanged, getContactMessages } =
     useContext(MessagesContext);
   const transitionEvents = hookTransitionEvents(navigation);
   const { contacts, setContact } = useContext(ContactsContext);
 
-  var messages = getContactMessages(route.params.contact).sort(
-    (a, b) => b.timestamp - a.timestamp
-  );
+  var messages = getContactMessages(route.params.contact);
 
-  const [text, onChangeText] = React.useState("");
+  const [text, onChangeText] = React.useState('');
   const [modalText, onChangeModalText] = React.useState(
     route.params.contact.name
   );
@@ -77,9 +76,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
 
   useEffect(() => {
     //setMessages(getContactMessages(route.params.contact));
-    messages = getContactMessages(route.params.contact).sort(
-      (a, b) => b.timestamp - a.timestamp
-    );
+    messages = getContactMessages(route.params.contact);
     setTimeout(() => {
       list?.scrollToOffset({ animated: false, offset: 0 });
     }, 100);
@@ -99,6 +96,17 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
     }
   }, [list]);
 
+  useEffect(() => {
+    async function load() {
+      await AsyncStorage.setItem(
+        'enteredChatTimestamp',
+        new Date().valueOf().toString()
+      );
+    }
+
+    load();
+  });
+
   return (
       <Screen scrollable={false} style={{
         flexDirection: 'row',
@@ -109,19 +117,19 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
         <View
           style={{
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: 'center',
+            alignItems: 'center',
             marginTop: 22,
           }}
         >
           <View
             style={{
               margin: 20,
-              backgroundColor: "white",
+              backgroundColor: 'white',
               borderRadius: 20,
               padding: 35,
-              alignItems: "center",
-              shadowColor: "#000",
+              alignItems: 'center',
+              shadowColor: '#000',
               shadowOffset: {
                 width: 0,
                 height: 2,
@@ -138,7 +146,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               maxLength={12}
               style={{
                 height: 40,
-                width: "85%",
+                width: '85%',
                 margin: 10,
                 padding: 5,
                 backgroundColor: Colors.lightGray,
@@ -161,7 +169,7 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
         style={[
           Styles.roundCardView,
           {
-            backgroundColor: "white",
+            backgroundColor: 'white',
           },
         ]}
       >
@@ -194,14 +202,14 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           )}
           showsVerticalScrollIndicator={true}
           contentContainerStyle={{
-            justifyContent: "flex-end",
+            justifyContent: 'flex-end',
           }}
           scrollEnabled={true}
           initialNumToRender={messages.length}
         />
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={85}
           style={{
             flexDirection: "row",
@@ -219,20 +227,20 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
                 padding: 10,
             }}
             onChangeText={onChangeText}
-            placeholder={"Write a reply..."}
+            placeholder={'Write a reply...'}
             value={text}
           />
 
           <TouchableOpacity
             style={{
               height: 60,
-              flexDirection: "row",
-              alignContent: "stretch",
+              flexDirection: 'row',
+              alignContent: 'stretch',
             }}
             onPress={() => {
               if (text.length != 0) {
                 sendMessage(route.params.contact, `${text}`).then(() => {
-                  onChangeText("");
+                  onChangeText('');
                 });
               }
             }}
