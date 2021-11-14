@@ -139,7 +139,7 @@ export function EstablishSecretModal({
   useEffect(() => {}, [eventCount]);
 
   return (
-    <Screen scrollStyle={{justifyContent: 'flex-start', paddingTop: 55}}>
+    <Screen scrollable={false} scrollStyle={{justifyContent: 'flex-start', paddingTop: 55}}>
       <Container>
         <Text style={Styles.title}>Key exchange</Text>
         <FlatList
