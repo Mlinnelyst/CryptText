@@ -11,21 +11,21 @@ import {
   Keyboard,
   Platform,
   Modal,
-} from 'react-native';
-import Colors from '../../styles/Colors';
-import { MessageComponent } from '../../components/MessageComponent';
-import { useFirstRender } from '../../components/useFirstRender';
-import { MessageData } from '../../cryptography/message';
-import { ClientKeyContext } from '../../providers/ClientKeyProvider';
-import { MessagesContext } from '../../providers/MessagesProvider';
-import { ContactsContext } from '../../providers/ContactsProvider';
-import Styles, { transitionDuration } from '../../styles/Styles';
+} from "react-native";
+import Colors from "../../styles/Colors";
+import { MessageComponent } from "../../components/MessageComponent";
+import { MessageData } from "../../cryptography/message";
+import { ClientKeyContext } from "../../providers/ClientKeyProvider";
+import { MessagesContext } from "../../providers/MessagesProvider";
+import { ContactsContext } from "../../providers/ContactsProvider";
+import Styles, { transitionDuration } from "../../styles/Styles";
 import {
   hookTransitionEvents,
   unHookTransitionEvents,
-} from '../../utility/transitionEventHooks';
-import { MainNavProps } from '../MainParamList';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+} from "../../utility/transitionEventHooks";
+import { MainNavProps } from "../MainParamList";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Screen from "../../components/Screen";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
@@ -59,10 +59,10 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
             style={{
               flex: 1,
               color: Colors.gray,
-              alignSelf: 'flex-end',
-              textAlignVertical: 'center',
-              marginRight: 30,
-              marginTop: 5,
+              alignSelf: "flex-end",
+              textAlignVertical: "center",
+              marginRight: 16,
+              marginTop: 6,
             }}
           />
         </TouchableOpacity>
@@ -108,7 +108,11 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
   });
 
   return (
-    <View style={Styles.view}>
+      <Screen scrollable={false} style={{
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        paddingTop: 6,
+      }}>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View
           style={{
@@ -179,8 +183,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
             return message.timestamp.toString();
           }}
           style={{
-            margin: 10,
-
+            padding: 12,
+            paddingBottom: 16,
             flex: 1,
           }}
           renderItem={(info) => (
@@ -208,16 +212,19 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={85}
           style={{
-            flexDirection: 'row',
-            backgroundColor: 'white',
+            flexDirection: "row",
+            backgroundColor: "white",
+            borderTopWidth: 1,
+            borderTopColor: Colors.lightGray,
           }}
         >
           <TextInput
             style={{
-              height: 40,
-              width: '80%',
-              margin: 5,
-              padding: 10,
+                flex: 1,
+                height: 40,
+                margin: 5,
+                marginBottom: 16,
+                padding: 10,
             }}
             onChangeText={onChangeText}
             placeholder={'Write a reply...'}
@@ -226,7 +233,6 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
 
           <TouchableOpacity
             style={{
-              width: '20%',
               height: 60,
               flexDirection: 'row',
               alignContent: 'stretch',
@@ -241,17 +247,19 @@ export function ChatScreen({ navigation, route }: MainNavProps<'Chat'>) {
           >
             <MaterialCommunityIcons
               name="send"
-              size={40}
+              size={28}
               color="blue"
               style={{
-                alignSelf: 'center',
-                textAlignVertical: 'center',
-                paddingLeft: 10,
+                alignSelf: "center",
+                textAlignVertical: "center",
+                paddingLeft: 0,
+                paddingRight: 14,
+                paddingBottom: 4,
               }}
             />
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </Animated.View>
-    </View>
+    </Screen>
   );
 }

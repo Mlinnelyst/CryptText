@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Dimensions, Text, View } from "react-native";
 import IconButton from "../../components/IconButton";
 import Styles from "../../styles/Styles";
+import Screen from "../../components/Screen";
+import Container from "../../components/Container";
 import { MainNavProps } from "../MainParamList";
 import QRCode from "react-native-qrcode-svg";
 import { ClientKeyContext } from "../../providers/ClientKeyProvider";
@@ -14,11 +16,11 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<"DisplayCode">) {
   const { socket } = useContext(SocketContext);
   const { client } = useContext(ClientKeyContext);
 
-  const screenWidth = Dimensions.get("screen").width;
-  const codeSize = screenWidth * 0.8;
-
   useEffect(() => {
-    navigation.setOptions({ headerShown: contacts.length != 0 });
+    navigation.setOptions({
+        headerShown: contacts.length != 0,
+        title: '',
+    });
 
     // Add socket listener
     socket?.on("public_key_scanned", (scanned_by_public_key: string) => {
@@ -35,44 +37,35 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<"DisplayCode">) {
     };
   }, []);
 
-  return (
-    <View style={[Styles.view, Styles.centeredView]}>
-      <View style={{ width: "80%", flex: 1 }}>
-        <View style={{ flex: 1 }}></View>
-
-        <View
-          style={{
-            alignItems: "center",
-            width: codeSize,
-            height: codeSize,
-          }}
+	return (
+        <Screen
+            action={
+                <IconButton
+                    onPress={() => navigation.replace('ScanCode')}
+                    iconName='camera'
+                    text='Scan a code'
+                />
+            }
         >
-          <QRCode
-            value={client.publicKey}
-            size={codeSize}
-            color={Colors.lightGray}
-            backgroundColor={Colors.darkBlue}
-          />
-        </View>
-        <View style={{ flex: 1 }}></View>
-        <View style={{ flex: 5 }}>
-          <Text style={Styles.title}>Instructions</Text>
-          <Text style={Styles.text}>
-            Tell your contact to open the scanner by pressing '+' in the
-            overview. Point their camera and scan the code.
-          </Text>
-        </View>
-
-        <View style={{ flex: 2 }}>
-          <IconButton
-            onPress={() => navigation.navigate("ScanCode")}
-            iconName="camera"
-            text="Scan a code"
-            height={Dimensions.get("screen").height * 0.06}
-            width={Dimensions.get("screen").width * 0.8}
-          />
-        </View>
-      </View>
-    </View>
-  );
+            <Container>
+				<View
+					style={Styles.qrContainer}
+				>
+					<QRCode
+						value={client.publicKey}
+						size={Styles.qrContainer.width}
+						color={Colors.lightGray}
+						backgroundColor={Colors.darkBlue}
+					/>
+				</View>
+				<View style={Styles.defaultVerticalPadding}>
+					<Text style={Styles.title}>Instructions</Text>
+					<Text style={Styles.text}>
+						Tell your contact to open the scanner by pressing '+' in the
+						overview. Point their camera and scan the code.
+					</Text>
+				</View>
+            </Container>
+        </Screen>
+	);
 }

@@ -1,42 +1,40 @@
 import React, { useContext, useRef, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import IconButton from '../../components/IconButton';
+import Container from '../../components/Container';
+import Screen from '../../components/Screen';
 import Styles from '../../styles/Styles';
 import { MainNavProps } from '../MainParamList';
 import IconSvg from '../../components/IconSvg';
 
 export function IntroScreen({ navigation }: MainNavProps<'Intro'>) {
 	const screenWidth = Dimensions.get('screen').width;
-	const codeSize = screenWidth * 0.8;
+	const logoSize = screenWidth * 0.6;
 
 	return (
-		<View style={[Styles.view, Styles.centeredView]}>
-			<View style={{ width: '80%', flex: 1 }}>
-				<View style={{ flex: 1 }}></View>
-				<IconSvg style={{ width: codeSize, height: codeSize }} />
-				<View style={{ flex: 1 }}></View>
-				<View style={{ flex: 5 }}>
+        <Screen
+            action={
+                <IconButton
+                    onPress={() => navigation.push('DisplayCode')}
+                    iconName='contacts'
+                    text='Add first contact'
+                />
+            }
+        >
+            <Container>
+                <View style={[Styles.alignCenter, Styles.defaultVerticalPadding]}>
+				    <IconSvg style={{ width: logoSize, height: logoSize }} />
+                </View>
+				<View style={Styles.defaultVerticalPadding}>
 					<Text style={Styles.title}>Get started using CryptText</Text>
 					<Text style={Styles.text}>
-						CryptText uses a unique generated keypair to encrypt communication
-						between you and your contacts.
-					</Text>
-					<Text style={Styles.text}>
+						CryptText uses a unique generated key-pair to encrypt communication
+						between you and your contacts.{"\n\n"}
 						To get started, scan the code shown on your contacts phone, or have
 						them scan your code.
 					</Text>
 				</View>
-
-				<View style={{ flex: 2 }}>
-					<IconButton
-						onPress={() => navigation.push('DisplayCode')}
-						iconName='contacts'
-						text='Add first contact'
-						height={Dimensions.get('screen').height * 0.06}
-						width={Dimensions.get('screen').width * 0.8}
-					/>
-				</View>
-			</View>
-		</View>
+			</Container>
+        </Screen>
 	);
 }

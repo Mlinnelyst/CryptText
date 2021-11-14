@@ -15,6 +15,7 @@ import { DisplayCodeScreen } from './screens/DisplayCodeScreen';
 import { ScanCodeScreen } from './screens/ScanCodeScreen';
 import { EstablishSecretModal } from './modals/EstablishSecretModal';
 import { ChatScreen } from './screens/ChatScreen';
+import { StatusBar } from 'react-native';
 
 interface ContactsStackProps {}
 
@@ -53,19 +54,27 @@ const customTransition: TransitionPreset = {
 export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 	const { contacts } = useContext(ContactsContext);
 
+    StatusBar.setBarStyle('light-content');
+
 	return (
 		<Stack.Navigator
 			initialRouteName={contacts.length == 0 ? 'Intro' : 'ContactsOverview'}
 			screenOptions={{
-				cardStyle: { backgroundColor: Colors.darkBlue },
+				cardStyle: {
+                    backgroundColor: Colors.darkBlue
+                },
 				headerStyle: {
 					backgroundColor: Colors.darkBlue,
+                    shadowRadius: 0,
+                    shadowOffset: {
+                        height: 0,
+                    },
 				},
 				headerTitleStyle: {
-					...Styles.title,
-					flex: 1,
-					textAlignVertical: 'center',
-					marginTop: 12,
+                    color: Colors.lightGray,
+                    fontSize: 19,
+                    marginBottom: 2,
+                    fontFamily: 'Poppins_400Regular',
 				},
 				headerTitleAlign: 'center',
 				headerTintColor: Styles.title.color,
@@ -89,8 +98,13 @@ export const MainStack: React.FC<ContactsStackProps> = ({}) => {
 					options={{ headerTitle: 'Chat' }}
 				/>
 
-				<Stack.Group>
-					<Stack.Screen name='DisplayCode' component={DisplayCodeScreen} />
+				<Stack.Group screenOptions={{
+                    headerShown: false
+                }}>
+					<Stack.Screen
+                        name='DisplayCode'
+                        component={DisplayCodeScreen}
+                    />
 					<Stack.Screen name='ScanCode' component={ScanCodeScreen} />
 				</Stack.Group>
 

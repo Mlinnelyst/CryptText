@@ -12,6 +12,7 @@ import {
   hookTransitionEvents,
   unHookTransitionEvents,
 } from '../../utility/transitionEventHooks';
+import Screen from '../../components/Screen';
 
 export function ContactsOverviewScreen({
   navigation,
@@ -38,7 +39,8 @@ export function ContactsOverviewScreen({
               color: Colors.gray,
               alignSelf: 'flex-end',
               textAlignVertical: 'center',
-              marginRight: 10,
+              marginRight: 16,
+              marginTop: 6,
             }}
           />
         </TouchableOpacity>
@@ -55,11 +57,16 @@ export function ContactsOverviewScreen({
   };
 
   return (
-    <View style={Styles.view}>
+    <Screen scrollable={false} style={{
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        paddingTop: 6,
+    }}>
       <Animated.View
         style={[
           Styles.roundCardView,
           {
+            flex: 1,
             translateY: transitionEvents.progress.interpolate({
               inputRange: [0, 1],
               outputRange: [100, 0],
@@ -84,6 +91,6 @@ export function ContactsOverviewScreen({
           )}
         />
       </Animated.View>
-    </View>
+    </Screen>
   );
 }

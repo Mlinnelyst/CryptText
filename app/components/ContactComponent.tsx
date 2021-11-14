@@ -85,86 +85,90 @@ export function ContactComponent({
   return (
     <TouchableOpacity
       style={{
-        width: '90%',
         alignSelf: 'center',
         flexDirection: 'row',
         marginTop: 3,
         marginBottom: 3,
+        paddingHorizontal: 12,
       }}
       onPress={() => {
         onPress();
         setTimestamp(Date.now());
       }}
     >
-      <View style={{ flex: 1, marginRight: 10 }}>
+      <View style={{ marginRight: 12 }}>
         <ContactNameCircleComponent contact={contact} />
       </View>
       <View
         style={{
-          flex: 5,
+          flex: 1,
+          flexDirection: 'row',
           borderBottomWidth: 1,
           borderBottomColor: Colors.lightGray,
+          paddingBottom: 12,
         }}
       >
-        <Text
-          style={[
-            Styles.title,
-            {
-              marginBottom: 0,
-              color: Colors.darkBlue,
-              fontSize: Styles.text.fontSize,
-            },
-          ]}
-        >
-          {contact.name}
-        </Text>
-        <Text style={[Styles.text, { fontSize: 13 }]}>
-          {latestMessage?.text.slice(0, 30)}
-        </Text>
-      </View>
-
-      <View>
-        {unreadMessages > 0 && (
-          <Text
-            style={{
-              textAlign: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              color: Colors.white,
-              backgroundColor: Colors.blue,
-              padding: 1,
-              borderStyle: 'solid',
-              borderColor: Colors.blue,
-              borderWidth: 2,
-              borderRadius: 90,
-              marginRight: 10,
-            }}
-          >
-            {unreadMessages}
-          </Text>
-        )}
-      </View>
-
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
+        <View style={{
             flex: 1,
-            alignContent: 'flex-start',
-          }}
-        >
-          <Text style={[Styles.text]}>
-            {latestMessage
-              ? contactLastMessageTime(latestMessage.timestamp)
-              : ''}
-          </Text>
+        }}>
+            <Text
+                style={[
+                    Styles.title,
+                    {
+                        marginBottom: 0,
+                        color: Colors.darkBlue,
+                        fontSize: Styles.text.fontSize,
+                    },
+                ]}
+            >
+                {contact.name}
+            </Text>
+            <Text style={[Styles.text, { fontSize: 14 }]}>
+                {latestMessage?.text.slice(0, 30)}
+            </Text>
         </View>
-        <View
-          style={{
-            flex: 1,
-            alignContent: 'flex-start',
-          }}
-        ></View>
+
+        <View style={{
+            flexDirection: 'column',
+        }}>
+            <View
+            style={{
+                flex: 1,
+                alignContent: 'flex-start',
+            }}
+            >
+            <Text style={[Styles.text, { fontSize: 14 }]}>
+                {latestMessage
+                ? contactLastMessageTime(latestMessage.timestamp)
+                : ''}
+            </Text>
+            </View>
+
+                {unreadMessages > 0 && (
+                <View style={{
+                    backgroundColor: Colors.blue,
+                    padding: 1,
+                    borderStyle: 'solid',
+                    borderColor: Colors.blue,
+                    borderWidth: 2,
+                    borderRadius: 90,
+                }}>
+                    <Text
+                        style={{
+                            textAlign: 'center',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            color: Colors.white,
+                            fontSize: 12,
+                        }}
+                    >
+                        {unreadMessages}
+                    </Text>
+                </View>
+                )}
+        </View>
       </View>
+
     </TouchableOpacity>
   );
 }

@@ -10,7 +10,7 @@ export function ContactNameCircleComponent({ contact }: { contact: Contact }) {
 			style={{
 				backgroundColor: Colors.lightGray,
 				aspectRatio: 1,
-				width: '100%',
+				width: 50,
 				alignSelf: 'center',
 				justifyContent: 'center',
 				borderRadius: 90,
