@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Button, View, Text, Animated } from 'react-native';
 import { Contact, ContactsContext } from '../../providers/ContactsProvider';
 import Styles, { transitionDuration } from '../../styles/Styles';
@@ -13,12 +13,36 @@ import {
   unHookTransitionEvents,
 } from '../../utility/transitionEventHooks';
 import Screen from '../../components/Screen';
+import { MessagesContext } from '../../providers/MessagesProvider';
 
 export function ContactsOverviewScreen({
   navigation,
   route,
 }: MainNavProps<'ContactsOverview'>) {
   const { contacts } = useContext(ContactsContext);
+  const { getContactMessages, messagesChanged } = useContext(MessagesContext);
+
+  function sortContactsByMsgSentTs(contacts: Contact[]): Contact[] {
+    return contacts.sort((a, b) => {
+      const aMessages = getContactMessages(a);
+      const aLastMessageTs =
+        aMessages.length > 0 ? aMessages[0].timestamp : a.timestamp;
+
+      const bMessages = getContactMessages(b);
+      const bLastMessageTs =
+        bMessages.length > 0 ? bMessages[0].timestamp : b.timestamp;
+
+      return bLastMessageTs - aLastMessageTs;
+    });
+  }
+
+  const [sortedContacts, setSortedContacts] = useState<Contact[]>(
+    sortContactsByMsgSentTs(contacts)
+  );
+
+  useEffect(() => {
+    setSortedContacts(sortContactsByMsgSentTs(contacts));
+  }, [contacts, messagesChanged]);
 
   const transitionEvents = hookTransitionEvents(navigation);
 
@@ -57,11 +81,14 @@ export function ContactsOverviewScreen({
   };
 
   return (
-    <Screen scrollable={false} style={{
+    <Screen
+      scrollable={false}
+      style={{
         flexDirection: 'row',
         paddingHorizontal: 12,
         paddingTop: 6,
-    }}>
+      }}
+    >
       <Animated.View
         style={[
           Styles.roundCardView,
@@ -75,7 +102,7 @@ export function ContactsOverviewScreen({
         ]}
       >
         <FlatList
-          data={contacts}
+          data={sortedContacts}
           keyExtractor={(item) => {
             const c = item as Contact;
             return c.conversationId;
