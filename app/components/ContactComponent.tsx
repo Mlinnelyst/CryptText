@@ -75,7 +75,7 @@ export function ContactComponent({
     const messages = getContactMessages(contact);
 
     if (messages.length > 0) {
-      setLatestMessage(messages[messages.length - 1]);
+      setLatestMessage(messages[0]);
       loadUnreadMessages(messages);
     }
   }, [messagesChanged]);
