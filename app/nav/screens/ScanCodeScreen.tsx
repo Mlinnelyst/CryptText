@@ -19,7 +19,10 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
 	const cameraPreviewSize = screenWidth * 0.8;
 
 	useEffect(() => {
-		navigation.setOptions({ headerShown: contacts.length != 0 });
+		navigation.setOptions({
+            headerShown: contacts.length != 0,
+            title: '',
+        });
 
 		const getCameraPermission = () => {
 			// Get camera permission
@@ -42,7 +45,7 @@ export function ScanCodeScreen({ navigation }: MainNavProps<'ScanCode'>) {
         <Screen
             action={
                 <IconButton
-                    onPress={() => navigation.pop()}
+                    onPress={() => navigation.replace('DisplayCode')}
                     iconName='qrcode'
                     text='Display your code'
                 />

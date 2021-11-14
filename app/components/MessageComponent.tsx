@@ -40,7 +40,7 @@ export function MessageComponent({
               inputRange: [0, 1],
               outputRange: [0, 1],
             }),
-            borderRadius: 90,
+            borderRadius: 18,
             backgroundColor: sentByUser
               ? Colors.lighterDarkBlue
               : Colors.lightGray,

@@ -5,24 +5,31 @@ import Container from './Container';
 
 interface Props {
 	children: React.ReactNode;
-	action: React.ReactNode;
+	action?: React.ReactNode;
+    scrollable?: boolean;
+    style?: object;
 }
 
 export default (props: Props) => {
 	return (
 		<View
-			style={{
-                flex: 1,
-            }}
+			style={[
+                props.style,
+                {
+                    flex: 1,
+                }
+            ]}
 		>
-            <ScrollView
-                contentContainerStyle={{
-                    flexGrow: 1,
-                    justifyContent: 'space-around',
-                }}
-            >
-                {props.children}
-            </ScrollView>
+            {props.scrollable !== false ?
+                <ScrollView
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        justifyContent: 'space-around',
+                    }}
+                >
+                    {props.children}
+                </ScrollView>
+            : props.children}
 
             {props.action ? (
                 <View

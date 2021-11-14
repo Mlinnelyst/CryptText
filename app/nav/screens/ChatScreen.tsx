@@ -25,6 +25,7 @@ import {
 } from "../../utility/transitionEventHooks";
 import { MainNavProps } from "../MainParamList";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Screen from "../../components/Screen";
 
 export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
   const { client } = useContext(ClientKeyContext);
@@ -61,8 +62,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
               color: Colors.gray,
               alignSelf: "flex-end",
               textAlignVertical: "center",
-              marginRight: 30,
-              marginTop: 5,
+              marginRight: 16,
+              marginTop: 6,
             }}
           />
         </TouchableOpacity>
@@ -99,7 +100,11 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
   }, [list]);
 
   return (
-    <View style={Styles.view}>
+      <Screen scrollable={false} style={{
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        paddingTop: 6,
+      }}>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View
           style={{
@@ -170,8 +175,8 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
             return message.timestamp.toString();
           }}
           style={{
-            margin: 10,
-            marginBottom: 16,
+            padding: 12,
+            paddingBottom: 16,
             flex: 1,
           }}
           renderItem={(info) => (
@@ -247,6 +252,6 @@ export function ChatScreen({ navigation, route }: MainNavProps<"Chat">) {
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </Animated.View>
-    </View>
+    </Screen>
   );
 }

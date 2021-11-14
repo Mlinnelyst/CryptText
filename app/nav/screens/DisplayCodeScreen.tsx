@@ -16,11 +16,11 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<"DisplayCode">) {
   const { socket } = useContext(SocketContext);
   const { client } = useContext(ClientKeyContext);
 
-  const screenWidth = Dimensions.get("screen").width;
-  const codeSize = screenWidth * 0.8;
-
   useEffect(() => {
-    navigation.setOptions({ headerShown: contacts.length != 0 });
+    navigation.setOptions({
+        headerShown: contacts.length != 0,
+        title: '',
+    });
 
     // Add socket listener
     socket?.on("public_key_scanned", (scanned_by_public_key: string) => {
@@ -41,7 +41,7 @@ export function DisplayCodeScreen({ navigation }: MainNavProps<"DisplayCode">) {
         <Screen
             action={
                 <IconButton
-                    onPress={() => navigation.navigate('ScanCode')}
+                    onPress={() => navigation.replace('ScanCode')}
                     iconName='camera'
                     text='Scan a code'
                 />

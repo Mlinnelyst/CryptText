@@ -18,7 +18,6 @@ export default StyleSheet.create({
 	roundCardView: {
 		flex: 1,
 		backgroundColor: Colors.white,
-		width: '90%',
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
 		alignSelf: 'center',

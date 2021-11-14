@@ -45,11 +45,11 @@ export function ContactComponent({
   return (
     <TouchableOpacity
       style={{
-        width: '90%',
         alignSelf: 'center',
         flexDirection: 'row',
         marginTop: 3,
         marginBottom: 3,
+        paddingHorizontal: 12,
       }}
       onPress={onPress}
     >
