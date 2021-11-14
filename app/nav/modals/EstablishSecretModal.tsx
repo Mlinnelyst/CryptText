@@ -7,6 +7,8 @@ import {
   Text,
   View,
 } from 'react-native';
+import Screen from '../../components/Screen';
+import Container from '../../components/Container';
 import { ClientKeyContext } from '../../providers/ClientKeyProvider';
 import { ContactsContext } from '../../providers/ContactsProvider';
 import { SocketContext } from '../../providers/SocketProvider';
@@ -137,55 +139,51 @@ export function EstablishSecretModal({
   useEffect(() => {}, [eventCount]);
 
   return (
-    <View style={Styles.centeredView}>
-      <View style={{ width: '80%', flex: 1, justifyContent: 'center' }}>
-        <View style={{ flex: 1 }}></View>
+    <Screen scrollStyle={{justifyContent: 'flex-start', paddingTop: 55}}>
+      <Container>
         <Text style={Styles.title}>Key exchange</Text>
-        <View style={[Styles.view, { flex: 3 }]}>
-          <FlatList
-            renderItem={({ item }) => {
-              return (
+        <FlatList
+        renderItem={({ item }) => {
+            return (
+            <View
+                style={[
+                Styles.view,
+                { justifyContent: 'space-between', flexDirection: 'row' },
+                ]}
+            >
+                <Text style={[Styles.text, { flex: 1 }]}>{item.text}</Text>
                 <View
-                  style={[
-                    Styles.view,
-                    { justifyContent: 'space-between', flexDirection: 'row' },
-                  ]}
+                style={{
+                    alignItems: 'flex-end',
+                    width: Styles.title.fontSize,
+                }}
                 >
-                  <Text style={[Styles.text, { flex: 1 }]}>{item.text}</Text>
-                  <View
+                {item.pending ? (
+                    <ActivityIndicator
+                    color={Styles.title.color}
                     style={{
-                      alignItems: 'flex-end',
-                      width: Styles.title.fontSize,
+                        height: Styles.text.fontSize,
                     }}
-                  >
-                    {item.pending ? (
-                      <ActivityIndicator
-                        color={Styles.title.color}
-                        style={{
-                          height: Styles.text.fontSize,
-                        }}
-                      />
-                    ) : (
-                      <AntDesign
-                        name={item.error ? 'close' : 'check'}
-                        size={Styles.title.fontSize}
-                        style={{
-                          color: item.error ? Colors.red : Styles.title.color,
-                          textAlignVertical: 'center',
-                          textAlign: 'center',
-                        }}
-                      />
-                    )}
-                  </View>
+                    />
+                ) : (
+                    <AntDesign
+                    name={item.error ? 'close' : 'check'}
+                    size={Styles.title.fontSize}
+                    style={{
+                        color: item.error ? Colors.red : Styles.title.color,
+                        textAlignVertical: 'center',
+                        textAlign: 'center',
+                    }}
+                    />
+                )}
                 </View>
-              );
-            }}
-            data={events}
-            keyExtractor={(item, index) => index.toString()}
-          ></FlatList>
-        </View>
-        <View style={{ flex: 2 }}></View>
-      </View>
-    </View>
+            </View>
+            );
+        }}
+        data={events}
+        keyExtractor={(item, index) => index.toString()}
+        ></FlatList>
+      </Container>
+    </Screen>
   );
 }

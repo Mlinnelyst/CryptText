@@ -8,6 +8,7 @@ interface Props {
 	action?: React.ReactNode;
     scrollable?: boolean;
     style?: object;
+    scrollStyle?: object;
 }
 
 export default (props: Props) => {
@@ -22,10 +23,10 @@ export default (props: Props) => {
 		>
             {props.scrollable !== false ?
                 <ScrollView
-                    contentContainerStyle={{
+                    contentContainerStyle={[{
                         flexGrow: 1,
                         justifyContent: 'space-around',
-                    }}
+                    }, props.scrollStyle]}
                 >
                     {props.children}
                 </ScrollView>
