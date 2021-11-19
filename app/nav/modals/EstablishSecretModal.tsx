@@ -51,7 +51,7 @@ export function EstablishSecretModal({
     if (publicKeyConfirmed === false) {
       socket?.off('public_key_scan_confirmed');
 
-      addEvent({ text: 'No answer from client', error: true });
+      //addEvent({ text: 'No answer from client', error: true });
 
       setTimeout(() => {
         navigation.goBack();
@@ -139,49 +139,52 @@ export function EstablishSecretModal({
   useEffect(() => {}, [eventCount]);
 
   return (
-    <Screen scrollable={false} style={{justifyContent: 'flex-start', paddingTop: 60}}>
+    <Screen
+      scrollable={false}
+      style={{ justifyContent: 'flex-start', paddingTop: 60 }}
+    >
       <Container>
         <Text style={Styles.title}>Key exchange</Text>
         <FlatList
-        renderItem={({ item }) => {
+          renderItem={({ item }) => {
             return (
-            <View
+              <View
                 style={[
-                Styles.view,
-                { justifyContent: 'space-between', flexDirection: 'row' },
+                  Styles.view,
+                  { justifyContent: 'space-between', flexDirection: 'row' },
                 ]}
-            >
+              >
                 <Text style={[Styles.text, { flex: 1 }]}>{item.text}</Text>
                 <View
-                style={{
+                  style={{
                     alignItems: 'flex-end',
                     width: Styles.title.fontSize,
-                }}
+                  }}
                 >
-                {item.pending ? (
+                  {item.pending ? (
                     <ActivityIndicator
-                    color={Styles.title.color}
-                    style={{
+                      color={Styles.title.color}
+                      style={{
                         height: Styles.text.fontSize,
-                    }}
+                      }}
                     />
-                ) : (
+                  ) : (
                     <AntDesign
-                    name={item.error ? 'close' : 'check'}
-                    size={Styles.title.fontSize}
-                    style={{
+                      name={item.error ? 'close' : 'check'}
+                      size={Styles.title.fontSize}
+                      style={{
                         color: item.error ? Colors.red : Styles.title.color,
                         textAlignVertical: 'center',
                         textAlign: 'center',
-                    }}
+                      }}
                     />
-                )}
+                  )}
                 </View>
-            </View>
+              </View>
             );
-        }}
-        data={events}
-        keyExtractor={(item, index) => index.toString()}
+          }}
+          data={events}
+          keyExtractor={(item, index) => index.toString()}
         ></FlatList>
       </Container>
     </Screen>
